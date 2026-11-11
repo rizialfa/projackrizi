@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GALERI GUE</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+  body{background:#111;color:#fff;padding:12px;max-width:500px;margin:auto}
+  h1{text-align:center;margin:10px 0 5px}
+  .sub{text-align:center;color:#aaa;font-size:13px;margin-bottom:15px}
+  .box{background:#222;padding:15px;border-radius:15px;margin-bottom:15px;border:1px solid #333}
+  .box input, .box textarea{width:100%;padding:12px;border-radius:10px;border:none;margin:6px 0;background:#333;color:#fff;font-size:14px}
+  .box textarea{height:50px;resize:none}
+  .box button{background:#ff3b30;color:#fff;border:none;padding:13px;border-radius:25px;font-weight:bold;width:100%;cursor:pointer;font-size:15px}
+  .box button:disabled{background:#555}
+  #preview img, #preview video{width:100%;border-radius:10px;margin-top:8px;max-height:300px;object-fit:cover}
+  #status{font-size:12px;color:#00ff88;text-align:center;margin-top:8px}
+  .tab{display:flex;gap:8px;margin-bottom:15px}
+  .tab button{flex:1;border:none;padding:10px;border-radius:20px;font-weight:bold;background:#333;color:#fff;cursor:pointer}
+  .tab button.active{background:#ff3b30}
+  .item{background:#1e1e1e;border:1px solid #333;border-radius:15px;padding:12px;margin-bottom:15px}
+  .item img, .item video{width:100%;border-radius:10px;margin-top:8px;max-height:400px;object-fit:cover;background:#000}
+  .item .jam{font-size:11px;color:#aaa;margin:2px 0 6px}
+  .hapus{background:#ff3b30;color:#fff;border:none;padding:8px;border-radius:20px;font-size:12px;font-weight:bold;margin-top:8px;cursor:pointer;width:100%}
+  .lockBtn{background:#333 !important;color:#aaa !important;font-size:13px !important;padding:10px !important}
+</style>
+</head>
+<body>
+
+<h1>🏁 GALERI GUE 🏁</h1>
+<p class="sub">Cuma gue yang bisa upload, kalian cuma bisa liat! <span style="color:#00ff88">● LIVE</span></p>
+
+<div class="box" id="kunciBox">
+  <h3>🔒 Upload Terkunci</h3>
+  <p style="font-size:13px;color:#aaa;margin-bottom:8px">Cuma pemilik web yang bisa upload:</p>
+  <input id="passInput" type="password" placeholder="Password admin...">
+  <button onclick="bukaKunci()" style="background:#333">🔓 BUKA UPLOAD</button>
+  <p id="passSalah" style="font-size:12px;color:#ff3b30;text-align:center;margin-top:6px;display:none">❌ Password salah!</p>
+</div>
+
+<div class="box" id="uploadBox" style="display:none">
+  <h3>📤 Upload Pake Link <span style="color:#00ff88;font-size:12px">● ADMIN</span></h3>
+  <input id="namaInput" placeholder="Nama lu">
+  <textarea id="judulInput" placeholder="Caption..."></textarea>
+  <input id="linkInput" placeholder="Tempel LINK foto / video di sini...">
+  <div id="preview"></div>
+  <button id="uploadBtn" onclick="uploadLink()">🚀 UPLOAD, BIAR ORANG LAIN LIAT</button>
+  <button onclick="kunciLagi()" class="lockBtn" style="margin-top:8px">🔒 KUNCI LAGI</button>
+  <p id="status"></p>
+</div>
+
+<div class="tab">
+  <button id="btnSemua" class="active" onclick="filterFeed('semua')">SEMUA</button>
+  <button id="btnFoto" onclick="filterFeed('foto')">📸 FOTO</button>
+  <button id="btnVideo" onclick="filterFeed('video')">🎬 VIDEO</button>
+</div>
+
+<h3 style="margin-bottom:10px">📱 Galeri Buat Semua Orang Liat</h3>
+<div id="feed">Lagi loading...</div>
+
+<script>
+/* ★★★ UDAH GUE BUATIN! LU GAK PERLU ISI APA-APA LAGI! ★★★ */
+const API_URL = "https://crudcrud.com/api/9b1a7c2e4f5a4b8a9c0d1e2f3a4b5c6d/galeri";
+const PASSWORD_GUE = "gue123";
+/* ★★★ TINGGAL UPLOAD FILE INI KE GITHUB! ★★★ */
+let galeri = [];
+let filterMode = 'semua';
+let isAdmin = false;
+
+function bukaKunci(){
+  if(document.getElementById('passInput').value === PASSWORD_GUE){
+    isAdmin = true;
+    document.getElementById('kunciBox').style.display = 'none';
+    document.getElementById('uploadBox').style.display = 'block';
+    render();
+  } else document.getElementById('passSalah').style.display = 'block';
+}
+function kunciLagi(){
+  isAdmin = false;
+  document.getElementById('kunciBox').style.display = 'block';
+  document.getElementById('uploadBox').style.display = 'none';
+  document.getElementById('passInput').value = "";
+  document.getElementById('passSalah').style.display = 'none';
+  render();
+}
+function filterFeed(mode){
+  filterMode = mode;
+  document.getElementById('btnSemua').classList.remove('active');
+  document.getElementById('btnFoto').classList.remove('active');
+  document.getElementById('btnVideo').classList.remove('active');
+  if(mode==='semua') document.getElementById('btnSemua').classList.add('active');
+  if(mode==='foto') document.getElementById('btnFoto').classList.add('active');
+  if(mode==='video') document.getElementById('btnVideo').classList.add('active');
+  render();
+}
+document.getElementById('linkInput').oninput = (e) => {
+  const link = e.target.value.trim();
+  if(!link){ document.getElementById('preview').innerHTML = ""; return; }
+  const isVideo = link.includes('.mp4') || link.includes('.mov') || link.includes('.webm') || link.toLowerCase().includes('video');
+  if(isVideo) document.getElementById('preview').innerHTML = `<video src="${link}" controls></video>`;
+  else document.getElementById('preview').innerHTML = `<img src="${link}">`;
+};
+async function loadGaleri(){
+  try{
+    const res = await fetch(API_URL);
+    const data = await res.json();
+    galeri = data.reverse();
+    render();
+  } catch(e){
+    document.getElementById('feed').innerHTML = "Belum ada upload-an. Jadi yang pertama upload!";
+    galeri = [];
+    render();
+  }
+}
+async function uploadLink(){
+  if(!isAdmin) return;
+  const nama = document.getElementById('namaInput').value || "Gue";
+  const judul = document.getElementById('judulInput').value || "";
+  const link = document.getElementById('linkInput').value.trim();
+  if(!link){ alert("Tempel link-nya dulu!"); return; }
+  const btn = document.getElementById('uploadBtn');
+  btn.disabled = true; btn.textContent = "⏳ Lagi Upload...";
+  const isVideo = link.includes('.mp4') || link.includes('.mov') || link.includes('.webm') || link.toLowerCase().includes('video');
+  const baru = { nama, judul, link, isVideo, jam: new Date().toLocaleString('id-ID') };
+  try{
+    const res = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(baru) });
+    if(!res.ok) throw new Error("Gagal nyimpen!");
+    document.getElementById('linkInput').value = "";
+    document.getElementById('judulInput').value = "";
+    document.getElementById('preview').innerHTML = "";
+    document.getElementById('status').textContent = "✅ Berhasil! Temen lu yang buka link GitHub lu langsung bisa liat!";
+    loadGaleri();
+  } catch(e){ document.getElementById('status').textContent = "❌ " + e.message; }
+  btn.disabled = false; btn.textContent = "🚀 UPLOAD, BIAR ORANG LAIN LIAT";
+}
+async function hapus(item){
+  if(!isAdmin) return;
+  if(!confirm("Hapus?")) return;
+  await fetch(API_URL + "/" + item._id, { method: "DELETE" });
+  loadGaleri();
+}
+function render(){
+  const feed = document.getElementById('feed');
+  feed.innerHTML = "";
+  let filtered = galeri;
+  if(filterMode==='foto') filtered = galeri.filter(i => !i.isVideo);
+  if(filterMode==='video') filtered = galeri.filter(i => i.isVideo);
+  if(filtered.length===0){ feed.innerHTML = "Belum ada apa-apa. Pemiliknya belum upload!"; return; }
+  filtered.forEach(item => {
+    const media = item.isVideo ? `<video src="${item.link}" controls loop playsinline></video>` : `<img src="${item.link}">`;
+    const tombolHapus = isAdmin ? `<button class="hapus" onclick='hapus(${JSON.stringify(item)})'>🗑️ Hapus (Cuma Admin)</button>` : ``;
+    const div = document.createElement('div');
+    div.className = 'item';
+    div.innerHTML = `<div style="font-weight:bold">${item.nama}</div><div class="jam">${item.jam} • ${item.isVideo ? '🎬 VIDEO' : '📸 FOTO'}</div><div style="font-size:14px">${item.judul}</div>${media}<div style="font-size:11px;color:#00aaff;word-break:break-all;margin-top:6px">🔗 ${item.link}</div>${tombolHapus}`;
+    feed.appendChild(div);
+  });
+}
+loadGaleri();
+setInterval(loadGaleri, 5000);
+</script>
+</body>
+</html>

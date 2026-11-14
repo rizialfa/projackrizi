@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RIZI GROUP - UDAH DIBENERIN</title>
+<script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif}
+  body{background:#0f0f0f;color:#fff}
+  .wrap{max-width:420px;margin:0 auto;min-height:100vh;background:#111;border-left:2px solid #FFD700;border-right:2px solid #FFD700}
+  header{padding:18px;text-align:center;background:#1a1a1a;border-bottom:3px solid #FFD700;position:sticky;top:0;z-index:20}
+  header h1{color:#FFD700;font-size:26px;letter-spacing:3px}
+  header p{font-size:11px;color:#aaa}
+  .tabs{display:flex;background:#1a1a1a;border-bottom:1px solid #333;position:sticky;top:77px;z-index:20}
+  .tabs button{flex:1;padding:13px 4px;background:none;border:none;color:#888;font-weight:bold;font-size:13px;cursor:pointer}
+  .tabs button.on{color:#FFD700;border-bottom:3px solid #FFD700;background:#222}
+  .page{display:none;padding:12px}
+  .page.on{display:block}
+  .status{padding:11px;text-align:center;background:#0a2a12;border:1px solid #25D366;border-radius:20px;color:#25D366;font-size:13px;font-weight:bold;margin-bottom:12px}
+  .card{background:#1a1a1a;border:1px solid #333;border-radius:16px;padding:15px;margin-bottom:12px}
+  .card input{width:100%;padding:12px;border-radius:10px;border:1px solid #333;background:#222;color:#fff;outline:none;font-size:14px;margin-bottom:10px}
+  .upload-box{border:2px dashed #FFD700;border-radius:12px;padding:18px;text-align:center;cursor:pointer;background:#222;margin-bottom:10px}
+  #preview{width:100%;border-radius:12px;display:none;margin-bottom:10px;max-height:250px;object-fit:cover}
+  .btn{width:100%;padding:14px;background:#FFD700;color:#000;font-weight:900;border:none;border-radius:12px;font-size:15px;cursor:pointer}
+  .btn:disabled{background:#555;color:#999}
+  .btn-green{background:#25D366;color:#fff}
+  .item{background:#1a1a1a;border:1px solid #333;border-radius:16px;overflow:hidden;margin-bottom:12px}
+  .item img{width:100%;max-height:320px;object-fit:cover;display:block}
+  .item .info{padding:12px}
+  .item .info b{color:#FFD700}
+  .item .info p{font-size:13px;color:#ddd;margin:4px 0}
+  .item .info small{color:#888;font-size:11px}
+  .kotak{background:#1a1a1a;border:2px solid #FFD700;border-radius:16px;padding:14px;margin-bottom:12px}
+  .kotak h2{color:#FFD700;font-size:15px;margin-bottom:8px}
+  .kolom{background:#222;border:1px solid #333;padding:8px 10px;border-radius:8px;margin-bottom:6px;font-size:13px;display:flex;justify-content:space-between}
+  .db-row{background:#222;border:1px solid #333;border-radius:12px;padding:10px;margin-bottom:8px;font-size:12px;word-break:break-all}
+  .db-row b{color:#FFD700}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><h1>RIZI GROUP</h1><p>VERSI FIX • GAK PAKE CATBOX LAGI • LANGSUNG MASUK DATABASE</p></header>
+  <div class="tabs">
+    <button id="tab1" class="on" onclick="pindah('web')">🏠 WEB / UPLOAD</button>
+    <button id="tab2" onclick="pindah('galeri')">🖼️ GALERI</button>
+    <button id="tab3" onclick="pindah('db')">🗄️ DATABASE</button>
+  </div>
+
+  <div id="page-web" class="page on">
+    <div class="status">● ONLINE • <span class="jml">Menyambung...</span></div>
+    <div class="card">
+      <input type="text" id="nama" placeholder="Nama kamu..." value="Rizi">
+      <input type="text" id="judul" placeholder="Judul foto...">
+      <div class="upload-box" onclick="document.getElementById('file').click()">
+        <p><b>📷 KLIK PILIH FOTO</b><br><span id="fileName">Belum ada foto</span></p>
+        <input type="file" id="file" accept="image/*" hidden onchange="previewFoto(this)">
+      </div>
+      <img id="preview">
+      <button class="btn" id="btnUpload" onclick="upload()">UPLOAD, BIAR DILIAT TEMEN ➜</button>
+      <p id="pesan" style="text-align:center;font-size:12px;color:#aaa;margin-top:8px"></p>
+    </div>
+    <div class="card"><b style="color:#FFD700">Kenapa Tadi Gagal?</b><p style="font-size:13px;color:#ccc;margin-top:6px;line-height:1.5">Tadi pake Catbox, di-block. Sekarang udah gue ganti, foto langsung masuk database online, jadi gak ada lagi Failed to fetch.</p></div>
+    <button class="btn btn-green" onclick="share()">📤 BAGIKAN LINK KE TEMEN</button>
+  </div>
+
+  <div id="page-galeri" class="page">
+    <div class="status">● GALERI SEMUA ORANG • <span class="jml">Menyambung...</span></div>
+    <div id="galeri"><p style="text-align:center;color:#666;padding:20px">Belum ada upload... Jadi yang pertama!</p></div>
+  </div>
+
+  <div id="page-db" class="page">
+    <div class="status">● DATABASE ONLINE • <span class="jml">Menyambung...</span></div>
+    <button class="btn" onclick="location.reload()" style="margin-bottom:12px">↻ REFRESH DATABASE</button>
+    <div class="kotak">
+      <h2>📦 TABEL: uploads</h2>
+      <div class="kolom"><b>id</b><span>ID unik</span></div>
+      <div class="kolom"><b>nama</b><span>Siapa yang upload</span></div>
+      <div class="kolom"><b>judul</b><span>Judul foto</span></div>
+      <div class="kolom"><b>file_url</b><span>Foto (langsung di database)</span></div>
+      <div class="kolom"><b>waktu</b><span>Kapan upload</span></div>
+    </div>
+    <h3 style="color:#FFD700;font-size:14px;margin:8px 0">👁️ ISI DATABASE (VIEWER):</h3>
+    <div id="dbIsi"><p style="text-align:center;color:#888;padding:15px">Nunggu data...</p></div>
+  </div>
+</div>
+
+<script>
+const gun = Gun({ peers: ['https://peer.wallie.io/gun','https://gun-manhattan.herokuapp.com/gun','https://eun1-gun.0peers.com/gun'] });
+const db = gun.get('rizi-online-fix-v3');
+let filePilih=null, udah=new Set(), total=0;
+
+function pindah(ke){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('on'));
+  document.getElementById('page-'+ke).classList.add('on');
+  if(ke==='web') document.getElementById('tab1').classList.add('on');
+  if(ke==='galeri') document.getElementById('tab2').classList.add('on');
+  if(ke==='db') document.getElementById('tab3').classList.add('on');
+}
+function previewFoto(i){
+  filePilih=i.files[0];
+  if(!filePilih) return;
+  document.getElementById('fileName').innerText=filePilih.name;
+  let r=new FileReader();
+  r.onload=e=>{let img=document.getElementById('preview'); img.src=e.target.result; img.style.display='block';};
+  r.readAsDataURL(filePilih);
+}
+
+// KECILIN FOTO BIAR BISA MASUK DATABASE, BIAR GAK GAGAL LAGI
+function kecilinFoto(file){
+  return new Promise((resolve)=>{
+    let reader=new FileReader();
+    reader.onload=e=>{
+      let img=new Image();
+      img.onload=()=>{
+        let max=700;
+        let w=img.width, h=img.height;
+        if(w>max){ h=h*max/w; w=max; }
+        if(h>max){ w=w*max/h; h=max; }
+        let c=document.createElement('canvas');
+        c.width=w; c.height=h;
+        c.getContext('2d').drawImage(img,0,0,w,h);
+        resolve(c.toDataURL('image/jpeg',0.65));
+      };
+      img.src=e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function upload(){
+  let nama=document.getElementById('nama').value.trim()||'Rizi';
+  let judul=document.getElementById('judul').value.trim()||'Tanpa Judul';
+  if(!filePilih) return alert('Pilih foto dulu!');
+  let btn=document.getElementById('btnUpload');
+  btn.disabled=true; btn.innerText='SEDANG MENGECILKAN & UPLOAD...';
+  document.getElementById('pesan').innerText='Lagi proses, tunggu 3-5 detik...';
+  try{
+    let fotoKecil = await kecilinFoto(filePilih);
+    // Langsung simpen ke database online, gak lewat Catbox lagi!
+    db.set({nama, judul, file_url: fotoKecil, waktu: Date.now()});
+    document.getElementById('pesan').innerText='✅ BERHASIL! Sekarang cek tab GALERI';
+    document.getElementById('judul').value='';
+    document.getElementById('preview').style.display='none';
+    document.getElementById('fileName').innerText='Belum ada foto';
+    filePilih=null;
+    setTimeout(()=>pindah('galeri'), 800);
+  }catch(e){
+    alert('Gagal: '+e.message);
+    document.getElementById('pesan').innerText='❌ Gagal: '+e.message;
+  }
+  btn.disabled=false; btn.innerText='UPLOAD, BIAR DILIAT TEMEN ➜';
+}
+
+db.map().on((data,key)=>{
+  if(!data||!data.file_url||udah.has(key)) return;
+  udah.add(key); total++;
+  document.querySelectorAll('.jml').forEach(el=>el.innerText=total+' FOTO ONLINE');
+  let galeri=document.getElementById('galeri');
+  if(total===1) galeri.innerHTML='';
+  let div=document.createElement('div');
+  div.className='item';
+  div.innerHTML='<img src="'+data.file_url+'" loading="lazy"><div class="info"><b>'+data.judul+'</b><p>oleh '+data.nama+'</p><small>'+new Date(data.waktu).toLocaleString('id-ID')+'</small></div>';
+  galeri.prepend(div);
+  let dbIsi=document.getElementById('dbIsi');
+  if(total===1) dbIsi.innerHTML='';
+  let row=document.createElement('div');
+  row.className='db-row';
+  row.innerHTML='<b>nama:</b> '+data.nama+'<br><b>judul:</b> '+data.judul+'<br><b>file_url:</b> [FOTO TERSIMPAN DI DATABASE]<br><b>waktu:</b> '+new Date(data.waktu).toLocaleString('id-ID');
+  dbIsi.prepend(row);
+});
+function share(){
+  let teks='Lihat RIZI GROUP! '+location.href;
+  if(navigator.share) navigator.share({text:teks});
+  else {navigator.clipboard.writeText(teks); alert('Link ke-copy!');}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RIZI GROUP - Chat Kuota</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
+  body{background:#0f0f0f;color:#fff;height:100vh;display:flex;flex-direction:column}
+  header{background:#111;padding:15px;text-align:center;border-bottom:2px solid #FFD700}
+  header h2{color:#FFD700}
+  header p{font-size:11px;color:#aaa}
+  #login{padding:25px;text-align:center;margin-top:20px}
+  #login input{padding:13px;width:88%;border-radius:20px;border:none;outline:none;margin-bottom:10px;text-align:center;font-size:15px}
+  #login button{padding:13px 35px;background:#FFD700;border:none;border-radius:20px;font-weight:bold;font-size:15px}
+  #login small{color:#25D366;display:block;margin-top:12px}
+  #chat{display:none;flex:1;flex-direction:column}
+  #messages{flex:1;overflow-y:auto;padding:15px;display:flex;flex-direction:column;gap:10px}
+  .msg{background:#222;padding:10px 14px;border-radius:15px;max-width:82%;align-self:flex-start}
+  .msg.me{background:#FFD700;color:#000;align-self:flex-end}
+  .msg b{font-size:12px;display:block}
+  .msg span{font-size:10px;color:#888;display:block;margin-top:2px}
+  #form{display:flex;padding:10px;gap:8px;background:#111}
+  #form input{flex:1;padding:12px;border-radius:20px;border:none;outline:none}
+  #form button{background:#FFD700;border:none;padding:12px 18px;border-radius:50%;font-weight:bold}
+</style>
+</head>
+<body>
+<header><h2>RIZI GROUP</h2><p>sip</p></header>
+
+<div id="login">
+  <h3 style="margin-bottom:15px">Masuk Grup RIZI</h3>
+  <input id="namaInput" placeholder="Nama Lu, misal: Rizi"><br>
+  <input id="hpInput" placeholder="No HP Lu, misal: 08123456789"><br>
+  <input id="grupInput" placeholder="Kode Grup" value="rizi-squad"><br>
+  <button onclick="masuk()">MASUK & CHAT</button>
+  <small>● berlangsung</small>
+  <p style="font-size:12px;color:#aaa;margin-top:10px">No HP cuma buat ID, biar temen lu tau itu lu. Gak ada kode OTP, gak ada SMS.</p>
+</div>
+
+<div id="chat">
+  <div id="messages"></div>
+  <form id="form" onsubmit="kirim(event)">
+    <input id="pesanInput" placeholder="Ketik pesan..." autocomplete="off">
+    <button>➤</button>
+  </form>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "ISI_APIKEY_LU",
+    authDomain: "ISI_PROJECT_LU.firebaseapp.com",
+    databaseURL: "https://ISI_PROJECT_LU-default-rtdb.firebaseio.com",
+    projectId: "ISI_PROJECT_LU",
+    appId: "ISI_APPID_LU"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  let nama="", hp="", grup="";
+
+  function masuk(){
+    nama = document.getElementById('namaInput').value.trim();
+    hp = document.getElementById('hpInput').value.trim();
+    grup = document.getElementById('grupInput').value.trim() || "rizi-squad";
+    if(!nama || !hp) return alert("Isi Nama + No HP dulu!");
+    // Simpan No HP jadi ID biar gak bisa dipalsuin orang
+    localStorage.setItem('rizi_hp', hp);
+    localStorage.setItem('rizi_nama', nama);
+    document.getElementById('login').style.display='none';
+    document.getElementById('chat').style.display='flex';
+    db.ref('grup/'+grup).limitToLast(100).on('child_added', snap=>{
+      const d=snap.val();
+      const div=document.createElement('div');
+      div.className='msg'+(d.hp===hp?' me':'');
+      div.innerHTML=`<b>${d.nama} • ${d.hp}</b>${d.pesan}<span>${new Date(d.waktu).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}</span>`;
+      document.getElementById('messages').appendChild(div);
+      document.getElementById('messages').scrollTop=99999;
+    });
+  }
+  function kirim(e){
+    e.preventDefault();
+    const input=document.getElementById('pesanInput');
+    if(!input.value.trim()) return;
+    db.ref('grup/'+grup).push({nama:nama,hp:hp,pesan:input.value,waktu:Date.now()});
+    input.value="";
+  }
+  // Auto login kalo udah pernah masuk
+  window.onload=()=>{
+    let h=localStorage.getItem('rizi_hp');
+    let n=localStorage.getItem('rizi_nama');
+    if(h && n){document.getElementById('namaInput').value=n;document.getElementById('hpInput').value=h;}
+  }
+</script>
+</body>
+</html>

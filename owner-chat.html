@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OWNER CHAT - ALFARIZI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif}
+body{background:linear-gradient(180deg,#000,#111,#1a1a1a,#000);color:#fff;min-height:100vh}
+.wrap{max-width:480px;margin:0 auto;min-height:100vh;border-left:1px solid rgba(255,255,255,0.25);border-right:1px solid rgba(255,255,255,0.25);display:flex;flex-direction:column}
+.lock{padding:40px 20px;text-align:center;min-height:100vh;display:flex;flex-direction:column;justify-content:center}
+.lock b{font-size:24px}
+.lock p{font-size:13px;color:#aaa;margin:10px 0 20px;line-height:1.5}
+.lock input{width:100%;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;outline:none;text-align:center;font-size:16px;letter-spacing:2px}
+.lock button{margin-top:12px;width:100%;padding:14px;border:none;border-radius:12px;background:#fff;color:#000;font-weight:900;font-size:15px}
+.topBar{display:flex;align-items:center;gap:10px;padding:12px;background:linear-gradient(135deg,#ffcc00,#ff9900,#000);border-bottom:1px solid rgba(255,255,255,0.3);position:sticky;top:0;z-index:20;color:#000}
+.topBar b{font-size:16px;display:block;color:#000}
+.topBar small{color:#555;letter-spacing:2px;font-size:9px}
+.liveDot{margin-left:auto;font-size:11px;font-weight:bold;background:#000;color:#ffcc00;padding:6px 10px;border-radius:20px}
+.logout{padding:8px 12px;border-radius:10px;border:1px solid #000;background:#000;color:#fff;font-size:12px;font-weight:bold}
+.head{padding:14px;text-align:center}
+.head b{font-size:19px}
+.head p{font-size:12px;color:#bbb;margin-top:4px;line-height:1.5}
+.menu{display:flex;gap:8px;padding:0 10px 10px}
+.menu a{flex:1;text-align:center;padding:10px;border-radius:12px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.25);color:#fff;text-decoration:none;font-size:12px;font-weight:bold}
+.namaBox{margin:0 10px 10px;background:#ffcc00;border:1px solid #ffcc00;border-radius:14px;padding:10px;color:#000;display:flex;align-items:center;gap:10px}
+.namaBox .avaBig{width:40px;height:40px;border-radius:50%;background:#000;color:#ffcc00;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;flex-shrink:0}
+.namaBox b{font-size:14px;display:block}
+.namaBox small{font-size:11px;color:#555}
+.chat{flex:1;padding:0 10px 10px;display:flex;flex-direction:column;gap:10px;overflow-y:auto}
+.chatItem{background:linear-gradient(135deg,rgba(255,255,255,0.55),rgba(90,90,90,0.45),rgba(0,0,0,0.75));border:1px solid rgba(255,255,255,0.35);border-radius:16px;padding:10px 12px}
+.chatItem.me{background:linear-gradient(135deg,#ffcc00,#ff9900);color:#000;border-color:#ffcc00}
+.chatItem.me small{color:#555}
+.chatItem.owner{background:linear-gradient(135deg,#ffcc00,#ff9900);color:#000;border-color:#ffcc00}
+.chatItem.owner small{color:#555}
+.chatTop{display:flex;align-items:center;gap:8px}
+.ava{width:32px;height:32px;border-radius:50%;background:#fff;color:#000;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;flex-shrink:0}
+.chatItem.me .ava,.chatItem.owner .ava{background:#000;color:#ffcc00}
+.chatTop b{font-size:13px}
+.chatTop small{font-size:10px;color:#bbb;margin-left:auto}
+.chatItem.me small,.chatItem.owner small{color:#555}
+.chatItem p{font-size:13px;line-height:1.5;margin-top:6px;white-space:pre-wrap;word-break:break-word}
+.btnBalas{margin-top:8px;width:100%;padding:8px;border:1px solid #22c55e;border-radius:10px;background:#22c55e;color:#000;font-weight:bold;font-size:12px}
+.btnHapus{margin-top:6px;width:100%;padding:8px;border:none;border-radius:10px;background:#ff2222;color:#fff;font-weight:bold;font-size:12px}
+.empty{text-align:center;color:#aaa;font-size:13px;padding:30px 10px;line-height:1.6}
+.inputBar{position:sticky;bottom:0;background:rgba(0,0,0,0.9);border-top:1px solid rgba(255,255,255,0.3);padding:10px;display:flex;gap:8px}
+.inputBar input{flex:1;padding:13px;border-radius:20px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;outline:none;font-size:14px}
+.inputBar button{padding:13px 18px;border:none;border-radius:20px;background:#ffcc00;color:#000;font-weight:900;font-size:14px}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#fff;color:#000;padding:12px 18px;border-radius:20px;font-weight:bold;font-size:13px;z-index:100;display:none}
+#ownerArea{display:none;flex-direction:column;min-height:100vh}
+.replyInfo{font-size:11px;color:#ffcc00;padding:0 10px 6px;display:none}
+.replyInfo.show{display:block}
+.replyInfo b{color:#fff}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- GEMBOK OWNER -->
+<div class="lock" id="lockScreen">
+  <div style="font-size:50px">🔒</div>
+  <b>OWNER CHAT ONLY</b>
+  <p>File ini khusus owner buat bales chat.<br>Pembeli gak bisa masuk tanpa password.<br>Pembeli chat-nya di <b>chat.html</b>.</p>
+  <input type="password" id="passInput" placeholder="Masukin password..." onkeydown="if(event.key==='Enter') cekPass()">
+  <button onclick="cekPass()">BUKA 🔓</button>
+  <a href="chat.html" style="color:#aaa;font-size:12px;margin-top:14px;display:block">← Balik ke Chat Semua Orang</a>
+</div>
+
+<!-- AREA OWNER -->
+<div id="ownerArea">
+  <div class="topBar"><div><small>// OWNER CHAT_</small><b>👑 ALFARIZI</b></div><span class="liveDot">● LIVE</span><button class="logout" onclick="logout()">Keluar 🔒</button></div>
+  <div class="head"><b>💬 Bales Chat Semua Orang</b><p>Lu ngetik di sini sebagai <b>👑 owner_sabi</b>.<br>Langsung muncul di <b>chat.html</b> semua orang.</p></div>
+  <div class="menu"><a href="owner.html">👑 Owner</a><a href="chat.html">💬 Liat Chat</a><a href="owner-chat.html" style="background:#ffcc00;color:#000">👑 Owner Chat</a></div>
+
+  <div class="namaBox"><div class="avaBig">👑</div><div><b>👑 owner_sabi (LU)</b><small>Nama udah ke-kunci, gak bisa diganti. Biar gak ketuker sama pembeli.</small></div></div>
+
+  <div class="replyInfo" id="replyInfo">↩️ Membalas <b id="replyNama">...</b> • <span id="replyTeks"></span> <a href="#" onclick="batalBalas();return false" style="color:#ffaaaa">✕ Batal</a></div>
+  <div class="chat" id="chatList"><div class="empty">⏳ Lagi nyambung...</div></div>
+  <div class="inputBar"><input type="text" id="pesanInput" placeholder="Tulis balesan sebagai owner_sabi..." onkeydown="if(event.key==='Enter') kirimPesan()"><button onclick="kirimPesan()">Kirim 🚀</button></div>
+</div>
+
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const OWNER_PASSWORD = "rizi123";
+// HARUS SAMA PERSIS SAMA ID DI chat.html, BIAR NYAMBUNG!
+// Kalo di chat.html lu ganti, di sini juga harus diganti sama.
+const CHAT_NPOINT_ID = "b5e3df3be4b06e68a436";
+const CHAT_URL = "https://api.npoint.io/" + CHAT_NPOINT_ID;
+const NAMA_OWNER = "👑 owner_sabi";
+let chats=[]; let lastJson=''; let replyTarget=null;
+function showToast(t){ let el=document.getElementById('toast'); el.innerText=t; el.style.display='block'; setTimeout(()=>el.style.display='none',2500); }
+function cekPass(){ let p=document.getElementById('passInput').value; if(p===OWNER_PASSWORD){ localStorage.setItem('ownerLogin','ya'); bukaOwner(); } else { alert('❌ Password salah!'); document.getElementById('passInput').value=''; } }
+function bukaOwner(){ document.getElementById('lockScreen').style.display='none'; document.getElementById('ownerArea').style.display='flex'; fetchChat(false); setInterval(()=>fetchChat(false), 3000); }
+function logout(){ localStorage.removeItem('ownerLogin'); location.reload(); }
+async function fetchChat(silent){
+  if(CHAT_NPOINT_ID.includes('ID_CHAT')){ try{ chats=JSON.parse(localStorage.getItem('alfarizi_chat')||'[]'); }catch(e){ chats=[]; } render(); return; }
+  try{
+    let res=await fetch(CHAT_URL, {cache:'no-store'});
+    let data=await res.json(); if(!Array.isArray(data)) data=[];
+    let json=JSON.stringify(data);
+    if(json!==lastJson){
+      if(lastJson && !silent){
+        let lama=JSON.parse(lastJson); let baru=data.filter(x=>!lama.some(y=>y.id===x.id));
+        baru=baru.filter(m=>!(m.nama||'').includes('owner_sabi'));
+        if(baru.length){ showToast('💬 '+baru[0].nama+': '+baru[0].teks.slice(0,30)); if(navigator.vibrate) navigator.vibrate([300,100,300]); }
+      }
+      lastJson=json; chats=data; render();
+    }
+  }catch(e){}
+}
+async function saveChat(){
+  if(CHAT_NPOINT_ID.includes('ID_CHAT')){ localStorage.setItem('alfarizi_chat', JSON.stringify(chats)); lastJson=JSON.stringify(chats); return; }
+  await fetch(CHAT_URL, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(chats)});
+  lastJson=JSON.stringify(chats);
+}
+function balasChat(id){
+  let c=chats.find(x=>String(x.id)===String(id)); if(!c) return;
+  replyTarget=c;
+  document.getElementById('replyNama').innerText=c.nama;
+  document.getElementById('replyTeks').innerText='"'+(c.teks||'').slice(0,40)+'..."';
+  document.getElementById('replyInfo').classList.add('show');
+  document.getElementById('pesanInput').focus();
+}
+function batalBalas(){ replyTarget=null; document.getElementById('replyInfo').classList.remove('show'); }
+async function kirimPesan(){
+  let input=document.getElementById('pesanInput');
+  let teks=input.value.trim(); if(!teks) return;
+  await fetchChat(true);
+  // Kalo lagi bales orang, depannya otomatis dikasih @nama orang-nya
+  let teksKirim = replyTarget ? '@'+replyTarget.nama+' : '+teks : teks;
+  chats.push({id:Date.now(), nama:NAMA_OWNER, teks:teksKirim, time:new Date().toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}), isOwner:true, replyTo: replyTarget ? replyTarget.id : null});
+  if(chats.length>200) chats=chats.slice(-200);
+  input.value=''; batalBalas(); render();
+  await saveChat();
+  window.scrollTo(0, document.body.scrollHeight);
+}
+async function hapusSatu(id){
+  if(!confirm('Hapus chat ini?')) return;
+  await fetchChat(true);
+  chats=chats.filter(c=>String(c.id)!==String(id));
+  render(); await saveChat(); showToast('🗑️ Chat dihapus');
+}
+function render(){
+  let list=document.getElementById('chatList');
+  if(!chats.length){ list.innerHTML=`<div class="empty">Belum ada yang ngobrol nih.<br>Suruh orang chat dulu di chat.html 👇</div>`; return; }
+  list.innerHTML=chats.map(c=>{
+    let isOwner = (c.nama||'').includes('owner_sabi') || c.isOwner;
+    return `<div class="chatItem ${isOwner?'owner':''}">
+      <div class="chatTop"><div class="ava">${(c.nama||'A').charAt(0).toUpperCase()}</div><b>${c.nama} ${isOwner?'👑':''}</b><small>${c.time||''}</small></div>
+      <p>${c.teks}</p>
+      ${!isOwner ? `<button class="btnBalas" onclick="balasChat('${c.id}')">💬 Balas Orang Ini</button>` : ''}
+      <button class="btnHapus" onclick="hapusSatu('${c.id}')">🗑️ Hapus Chat Ini</button>
+    </div>`;
+  }).join('');
+  list.scrollTop = list.scrollHeight;
+}
+if(localStorage.getItem('ownerLogin')==='ya'){ bukaOwner(); }
+</script>
+</body>
+</html>

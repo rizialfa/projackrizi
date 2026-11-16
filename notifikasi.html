@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOTIFIKASI - ALFARIZI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif}
+body{background:linear-gradient(180deg,#0a0800,#1a1400,#2a2100,#000);color:#ffe9a8;min-height:100vh}
+.wrap{max-width:480px;margin:0 auto;min-height:100vh;border-left:1px solid rgba(255,215,0,0.4);border-right:1px solid rgba(255,215,0,0.4);background:linear-gradient(180deg,rgba(255,215,0,0.06),rgba(0,0,0,0.4));display:flex;flex-direction:column}
+.topBar{display:flex;align-items:center;gap:10px;padding:12px;background:linear-gradient(135deg,rgba(0,0,0,0.85),rgba(120,90,0,0.6),rgba(255,215,0,0.35));border-bottom:1px solid rgba(255,215,0,0.5);position:sticky;top:0;z-index:20}
+.topBar b{font-size:16px;color:#ffd700;display:block}
+.topBar small{font-size:10px;color:#ffe9a8;letter-spacing:2px}
+.navBtn{width:44px;height:44px;background:rgba(255,215,0,0.12);border:1px solid rgba(255,215,0,0.5);border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;flex-shrink:0}
+.navBtn span{display:block;width:20px;height:3px;background:#ffd700;border-radius:3px}
+.badge{margin-left:auto;background:#ff2222;color:#fff;font-size:12px;font-weight:900;min-width:28px;height:28px;border-radius:20px;display:flex;align-items:center;justify-content:center;padding:0 8px}
+.badge.zero{background:rgba(255,215,0,0.2);color:#ffd700}
+.overlay{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.6);z-index:9998;display:none}
+.overlay.show{display:block}
+.drawer{position:fixed;top:0;left:-300px;width:280px;max-width:85vw;height:100vh;background:linear-gradient(180deg,rgba(10,8,0,0.97),rgba(50,35,0,0.95),rgba(255,215,0,0.2));border-right:1px solid rgba(255,215,0,0.5);z-index:9999;transition:left .3s;overflow-y:auto;color:#ffe9a8}
+.drawer.open{left:0}
+.drawerHead{padding:18px 16px;background:linear-gradient(135deg,rgba(0,0,0,0.9),rgba(120,90,0,0.6),rgba(255,215,0,0.25));border-bottom:1px solid rgba(255,215,0,0.4);display:flex;align-items:center;gap:12px;color:#ffd700}
+.drawerHead .logo{width:48px;height:48px;background:linear-gradient(135deg,#000,#b8860b,#ffd700);border:1px solid rgba(255,215,0,0.6);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px}
+.drawerHead b{font-size:16px;color:#ffd700}
+.drawerHead small{color:#e8d48a;font-size:11px}
+.drawerClose{margin-left:auto;width:36px;height:36px;background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.4);border-radius:8px;color:#ffd700;font-size:18px}
+.drawerSection{padding:12px 16px 4px;font-size:10px;letter-spacing:2px;color:#b8a05a;font-weight:bold}
+.drawerItem{display:flex;align-items:center;gap:12px;padding:15px 16px;color:#ffe9a8;font-size:14px;font-weight:600;border-bottom:1px solid rgba(255,215,0,0.15);text-decoration:none}
+.drawerItem.on{background:linear-gradient(90deg,rgba(255,215,0,0.35),rgba(0,0,0,0.6));color:#ffd700}
+.drawerItem .ico{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,rgba(255,215,0,0.3),rgba(0,0,0,0.6));border:1px solid rgba(255,215,0,0.4);display:flex;align-items:center;justify-content:center;font-size:20px}
+.drawerItem small{display:block;font-size:11px;color:#d4c27a;font-weight:400}
+.drawerItem .arrow{margin-left:auto;color:#b8a05a}
+.head{padding:14px;text-align:center}
+.head b{font-size:19px;color:#ffd700}
+.head p{font-size:12px;color:#e8d48a;margin-top:4px;line-height:1.5}
+.tabs{display:flex;gap:8px;padding:0 12px 12px}
+.tabs button{flex:1;padding:11px;border-radius:12px;border:1px solid rgba(255,215,0,0.4);background:rgba(255,215,0,0.08);color:#ffe9a8;font-weight:bold;font-size:12px}
+.tabs button.on{background:linear-gradient(135deg,#ffd700,#b8860b);color:#000}
+.actions{padding:0 12px 12px;display:flex;gap:8px}
+.actions button{flex:1;padding:12px;border-radius:12px;border:1px solid rgba(255,215,0,0.4);font-weight:900;font-size:12px}
+.btnBaca{background:linear-gradient(135deg,#ffd700,#b8860b);color:#000;border:none}
+.btnHapus{background:#ff2222;color:#fff;border:none}
+.btnNotif{background:#22c55e;color:#000;border:none}
+.list{flex:1;padding:0 12px 20px;display:flex;flex-direction:column;gap:10px}
+.notifItem{background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.35);border-radius:16px;padding:12px;display:flex;gap:10px;align-items:flex-start}
+.notifItem.baru{background:rgba(255,215,0,0.18);border-color:#ffd700}
+.notifItem .icoBig{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#ffd700,#b8860b);color:#000;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.notifItem b{font-size:13px;color:#ffd700;display:block}
+.notifItem p{font-size:12px;line-height:1.5;color:#fff;margin-top:3px;white-space:pre-wrap;word-break:break-word}
+.notifItem small{font-size:10px;color:#c9b86a;display:block;margin-top:4px}
+.dotBaru{display:inline-block;background:#ff2222;color:#fff;font-size:9px;font-weight:900;padding:2px 6px;border-radius:10px;margin-left:6px}
+.empty{text-align:center;color:#c9b86a;font-size:13px;padding:40px 10px;line-height:1.6}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#ffd700;color:#000;padding:12px 18px;border-radius:20px;font-weight:bold;font-size:13px;display:none;z-index:100}
+.popup{position:fixed;top:10px;left:50%;transform:translate(-50%,-130%);width:calc(100% - 20px);max-width:460px;background:#ffd700;color:#000;border-radius:16px;padding:12px;display:flex;gap:10px;align-items:center;z-index:30000;box-shadow:0 10px 30px rgba(0,0,0,0.5);transition:transform .35s;cursor:pointer}
+.popup.show{transform:translate(-50%,0)}
+.popup b{font-size:13px;display:block}
+.popup p{font-size:12px;line-height:1.4}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topBar">
+    <button class="navBtn" onclick="toggleNav()"><span></span><span></span><span></span></button>
+    <div><small>// NOTIFIKASI_</small><b>🔔 ALFARIZI</b></div>
+    <span class="badge zero" id="badgeNotif">0</span>
+  </div>
+  <div class="head"><b>🔔 Notifikasi Web Lu</b><p>Semua order + chat baru masuk sini.<br>Kalo ada yang baru, langsung bunyi.</p></div>
+  <div class="tabs"><button id="tabSemua" class="on" onclick="setTab('semua')">🔔 Semua</button><button id="tabOrder" onclick="setTab('order')">🛒 Order</button><button id="tabChat" onclick="setTab('chat')">💬 Chat</button></div>
+  <div class="actions"><button class="btnNotif" onclick="aktifkanNotif()">🔔 Aktifin Notif HP</button><button class="btnBaca" onclick="tandaiBaca()">✅ Tandai Dibaca</button></div>
+  <div class="actions"><button class="btnHapus" onclick="hapusSemua()">🗑️ Hapus Semua Notif</button><button class="btnBaca" onclick="cekSemua(true)" style="background:#fff">🔄 Refresh</button></div>
+  <div class="list" id="notifList"><div class="empty">⏳ Lagi nyambung...</div></div>
+</div>
+
+<div class="overlay" id="overlay" onclick="closeNav()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawerHead"><div class="logo">🔔</div><div><b>ALFARIZI</b><small>NOTIFIKASI</small></div><button class="drawerClose" onclick="closeNav()">✕</button></div>
+  <div class="drawerSection">MENU UTAMA</div>
+  <a class="drawerItem" href="index.html"><span class="ico">🏠</span><span>Toko<small>Lihat semua makanan & minuman</small></span><span class="arrow">›</span></a>
+  <a class="drawerItem" href="chat.html"><span class="ico">💬</span><span>Chat<small>Ngobrol sama semua orang</small></span><span class="arrow">›</span></a>
+  <a class="drawerItem" href="komunitas.html"><span class="ico">👥</span><span>Komunitas<small>Chat sama pembeli / admin</small></span><span class="arrow">›</span></a>
+  <a class="drawerItem" href="owner.html"><span class="ico">👑</span><span>Owner<small>Order + Pantau web</small></span><span class="arrow">›</span></a>
+  <a class="drawerItem on" href="notifikasi.html"><span class="ico">🔔</span><span>Notifikasi<small>Order + Chat baru</small></span><span class="arrow">›</span></a>
+  <a class="drawerItem" href="cart.html"><span class="ico">🛒</span><span>Keranjang<small>Liat barang yang lu pilih</small></span><span class="arrow">›</span></a>
+  <div class="drawerSection">LAINNYA</div>
+  <a class="drawerItem" href="#" onclick="alert('Hubungi Admin via WA: 0881022734231')"><span class="ico">📞</span><span>Hubungi Admin<small>Chat WhatsApp</small></span><span class="arrow">›</span></a>
+  <div style="padding:16px;text-align:center;font-size:11px;color:#888">ALFARIZI • Notifikasi</div>
+</div>
+
+<div class="popup" id="popupNotif" onclick="tutupPopup()"><div style="font-size:28px">🔔</div><div style="flex:1"><b id="popupJudul">Ada yang baru!</b><p id="popupIsi">...</p></div><b>LIAT</b></div>
+<div class="toast" id="toast"></div>
+<script>
+const NPOINT_ORDER_ID = "67721059d7f24e580ead";
+const CHAT_NPOINT_ID = "b5e3df3be4b06e68a436";
+const URL_ORDER = "https://api.npoint.io/" + NPOINT_ORDER_ID;
+const URL_CHAT = "https://api.npoint.io/" + CHAT_NPOINT_ID;
+let allNotif=[], tab='semua', lastOrderJson='', lastChatJson='';
+let dibacaIds = JSON.parse(localStorage.getItem('alfarizi_notif_dibaca')||'[]');
+function showToast(t){ let el=document.getElementById('toast'); el.innerText=t; el.style.display='block'; setTimeout(()=>el.style.display='none',3000); }
+function toggleNav(){ let d=document.getElementById('drawer'); let o=document.getElementById('overlay'); if(!d.classList.contains('open')){ d.classList.add('open'); o.classList.add('show'); } else closeNav(); }
+function closeNav(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
+function setTab(t){ tab=t; document.getElementById('tabSemua').classList.toggle('on', t==='semua'); document.getElementById('tabOrder').classList.toggle('on', t==='order'); document.getElementById('tabChat').classList.toggle('on', t==='chat'); render(); }
+function aktifkanNotif(){ if(!('Notification' in window)){ alert('HP lu gak support notif'); return; } Notification.requestPermission().then(p=>{ if(p==='granted'){ showToast('✅ Notif HP aktif!'); if(navigator.vibrate) navigator.vibrate([300,100,300]); } }); }
+function bunyi(){ try{ let ctx=new (window.AudioContext||window.webkitAudioContext)(); [880,1200,1500].forEach((f,i)=>{ setTimeout(()=>{ let o=ctx.createOscillator(); let g=ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.frequency.value=f; o.type='sine'; g.gain.value=0.4; o.start(); setTimeout(()=>o.stop(),350); }, i*300); }); }catch(e){} if(navigator.vibrate) navigator.vibrate([300,100,300,100,300]); }
+function tampilPopup(judul, isi){
+  document.getElementById('popupJudul').innerText=judul;
+  document.getElementById('popupIsi').innerText=isi;
+  document.getElementById('popupNotif').classList.add('show');
+  setTimeout(()=>document.getElementById('popupNotif').classList.remove('show'), 6000);
+}
+function tutupPopup(){ document.getElementById('popupNotif').classList.remove('show'); }
+function tandaiBaca(){
+  allNotif.forEach(n=>{ if(!dibacaIds.includes(String(n.id))) dibacaIds.push(String(n.id)); });
+  localStorage.setItem('alfarizi_notif_dibaca', JSON.stringify(dibacaIds));
+  render(); showToast('✅ Semua udah ditandai dibaca');
+}
+function hapusSemua(){
+  if(!confirm('Hapus semua notif di layar ini? (Data order / chat di server gak kehapus, cuma notifnya aja yang ilang)')) return;
+  dibacaIds = allNotif.map(n=>String(n.id));
+  localStorage.setItem('alfarizi_notif_dibaca', JSON.stringify(dibacaIds));
+  allNotif=[]; render(); showToast('🧹 Notif dibersihin!');
+}
+async function cekSemua(manual){
+  try{
+    let r1=await fetch(URL_ORDER,{cache:'no-store'}); let d1=await r1.json(); if(!Array.isArray(d1)) d1=[];
+    let r2=await fetch(URL_CHAT,{cache:'no-store'}); let d2=await r2.json(); if(!Array.isArray(d2)) d2=[];
+    let gabung=[];
+    d1.forEach(x=>{ if(x.isOrder) gabung.push({id:'order-'+x.id, tipe:'order', judul:'🛒 ORDER BARU MASUK', isi:x.teks, time:x.time||'', raw:x}); });
+    d2.forEach(x=>{ gabung.push({id:'chat-'+x.id, tipe:'chat', judul:'💬 CHAT BARU - '+(x.nama||'Anonim'), isi:x.teks, time:x.time||'', raw:x}); });
+    // URUTIN: YANG BARU DI ATAS - PAKE ID (TIMESTAMP) BIAR KEURUT
+    gabung.sort((a,b)=> String(b.raw.id||0).localeCompare(String(a.raw.id||0)));
+    let gabungJson=JSON.stringify(gabung);
+    if(lastOrderJson && gabungJson!==lastOrderJson){
+      let lama=JSON.parse(lastOrderJson); let baru=gabung.filter(x=>!lama.some(y=>y.id===x.id));
+      if(baru.length){
+        bunyi();
+        tampilPopup(baru[0].judul, baru[0].isi.slice(0,80));
+        if('Notification' in window && Notification.permission==='granted'){ try{ new Notification(baru[0].judul,{body:baru[0].isi.slice(0,100)}); }catch(e){} }
+        showToast('🔔 '+baru.length+' notif baru masuk!');
+      }
+    }
+    lastOrderJson=gabungJson; allNotif=gabung;
+    render();
+  }catch(e){}
+}
+function render(){
+  let list=document.getElementById('notifList');
+  let tampil=allNotif.filter(n=> tab==='semua' || n.tipe===tab);
+  let belumDibaca = allNotif.filter(n=>!dibacaIds.includes(String(n.id))).length;
+  let badge=document.getElementById('badgeNotif');
+  badge.innerText=belumDibaca; badge.classList.toggle('zero', belumDibaca===0);
+  if(!tampil.length){ list.innerHTML=`<div class="empty">🔔 Belum ada notif.<br>Kalo ada order / chat baru, langsung muncul di sini.<br><br>Biarkan halaman ini kebuka, biar bunyi kalo ada yang baru.</div>`; return; }
+  list.innerHTML=tampil.map(n=>{
+    let baru = !dibacaIds.includes(String(n.id));
+    let link = n.tipe==='order' ? 'owner.html' : 'owner-chat.html';
+    return `<div class="notifItem ${baru?'baru':''}" onclick="location.href='${link}'">
+      <div class="icoBig">${n.tipe==='order'?'🛒':'💬'}</div>
+      <div style="flex:1;min-width:0"><b>${n.judul} ${baru?'<span class="dotBaru">BARU</span>':''}</b><p>${n.isi}</p><small>🕒 ${n.time} • Klik buat bales →</small></div>
+    </div>`;
+  }).join('');
+}
+cekSemua(false);
+setInterval(()=>cekSemua(false), 3000);
+</script>
+</body>
+</html>

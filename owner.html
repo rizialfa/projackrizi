@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OWNER - ALFARIZI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif}
+body{background:linear-gradient(180deg,#0a0800,#1a1400,#2a2100,#000);color:#ffe9a8;min-height:100vh}
+.wrap{max-width:480px;margin:0 auto;min-height:100vh;border-left:1px solid rgba(255,215,0,0.4);border-right:1px solid rgba(255,215,0,0.4);background:linear-gradient(180deg,rgba(255,215,0,0.06),rgba(0,0,0,0.4))}
+.lock{padding:40px 20px;text-align:center;min-height:100vh;display:flex;flex-direction:column;justify-content:center}
+.lock b{font-size:26px;color:#ffd700;letter-spacing:1px}
+.lock p{font-size:13px;color:#e8d48a;margin:10px 0 20px;line-height:1.5}
+.lock input{width:100%;padding:14px;border-radius:12px;border:1px solid rgba(255,215,0,0.5);background:rgba(255,215,0,0.08);color:#fff;outline:none;text-align:center;font-size:16px;letter-spacing:2px}
+.lock button{margin-top:12px;width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#ffd700,#b8860b,#ffd700);color:#000;font-weight:900;font-size:15px}
+.topBar{display:flex;align-items:center;gap:10px;padding:12px;background:linear-gradient(135deg,rgba(0,0,0,0.85),rgba(120,90,0,0.6),rgba(255,215,0,0.35));border-bottom:1px solid rgba(255,215,0,0.5);position:sticky;top:0;z-index:20}
+.topBar b{font-size:16px;color:#ffd700}
+.topBar small{font-size:10px;color:#ffe9a8;letter-spacing:2px}
+.navBtn{width:44px;height:44px;background:rgba(255,215,0,0.12);border:1px solid rgba(255,215,0,0.5);border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;flex-shrink:0}
+.navBtn span{display:block;width:20px;height:3px;background:#ffd700;border-radius:3px}
+.logout{margin-left:auto;padding:8px 12px;border-radius:10px;border:1px solid rgba(255,215,0,0.5);background:rgba(255,215,0,0.1);color:#ffd700;font-size:12px;font-weight:bold}
+.overlay{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.6);z-index:9998;display:none}
+.overlay.show{display:block}
+.drawer{position:fixed;top:0;left:-300px;width:280px;max-width:85vw;height:100vh;background:linear-gradient(180deg,rgba(10,8,0,0.97),rgba(50,35,0,0.95),rgba(255,215,0,0.2));border-right:1px solid rgba(255,215,0,0.5);z-index:9999;transition:left .3s;overflow-y:auto;color:#ffe9a8}
+.drawer.open{left:0}
+.drawerHead{padding:18px 16px;background:linear-gradient(135deg,rgba(0,0,0,0.9),rgba(120,90,0,0.6),rgba(255,215,0,0.25));border-bottom:1px solid rgba(255,215,0,0.4);display:flex;align-items:center;gap:12px;color:#ffd700}
+.drawerHead .logo{width:48px;height:48px;background:linear-gradient(135deg,#000,#b8860b,#ffd700);border:1px solid rgba(255,215,0,0.6);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px}
+.drawerHead b{font-size:16px;color:#ffd700}
+.drawerHead small{color:#e8d48a;font-size:11px}
+.drawerClose{margin-left:auto;width:36px;height:36px;background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.4);border-radius:8px;color:#ffd700;font-size:18px}
+.drawerSection{padding:12px 16px 4px;font-size:10px;letter-spacing:2px;color:#b8a05a;font-weight:bold}
+.drawerItem{display:flex;align-items:center;gap:12px;padding:15px 16px;color:#ffe9a8;font-size:14px;font-weight:600;border-bottom:1px solid rgba(255,215,0,0.15);text-decoration:none}
+.drawerItem.on{background:linear-gradient(90deg,rgba(255,215,0,0.35),rgba(0,0,0,0.6));color:#ffd700}
+.drawerItem .ico{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,rgba(255,215,0,0.3),rgba(0,0,0,0.6));border:1px solid rgba(255,215,0,0.4);display:flex;align-items:center;justify-content:center;font-size:20px}
+.drawerItem small{display:block;font-size:11px;color:#d4c27a;font-weight:400}
+.drawerItem .arrow{margin-left:auto;color:#b8a05a}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px}
+.stat{background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.4);border-radius:14px;padding:12px;text-align:center}
+.stat b{font-size:20px;display:block;color:#ffd700}
+.stat small{font-size:10px;color:#e8d48a}
+.tabs{display:flex;gap:8px;padding:0 12px 12px;flex-wrap:wrap}
+.tabs button{flex:1;padding:11px;border-radius:12px;border:1px solid rgba(255,215,0,0.4);background:rgba(255,215,0,0.08);color:#ffe9a8;font-weight:bold;font-size:12px;min-width:90px}
+.tabs button.on{background:linear-gradient(135deg,#ffd700,#b8860b);color:#000}
+.actions{padding:0 12px 12px;display:flex;gap:8px}
+.actions button{flex:1;padding:12px;border-radius:12px;border:1px solid rgba(255,215,0,0.4);font-weight:900;font-size:12px}
+.btnDelAll{background:#ff2222;color:#fff;border:none}
+.btnRefresh{background:linear-gradient(135deg,#ffd700,#fff8c5);color:#000;border:none}
+.btnNotif{background:#22c55e;color:#000;border:none}
+.chat{padding:0 10px 20px;display:flex;flex-direction:column;gap:10px}
+.chatItem{background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.35);border-radius:16px;padding:10px 12px}
+.chatItem.balesan{background:rgba(255,215,0,0.18);border-color:#ffd700}
+.chatTop{display:flex;align-items:center;gap:8px}
+.ava{width:32px;height:32px;border-radius:50%;background:#ffd700;color:#000;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px}
+.chatTop b{font-size:13px;color:#ffd700}
+.chatTop small{font-size:10px;color:#c9b86a;margin-left:auto}
+.chatItem p{font-size:13px;line-height:1.5;margin-top:6px;white-space:pre-wrap;word-break:break-word;color:#fff}
+.btnRow{display:flex;gap:8px;margin-top:8px}
+.btnBalas{flex:1;padding:9px;border:none;border-radius:10px;background:linear-gradient(135deg,#ffd700,#b8860b);color:#000;font-weight:900;font-size:12px}
+.delBtn{flex:1;padding:9px;border:none;border-radius:10px;background:#ff2222;color:#fff;font-weight:bold;font-size:12px}
+.empty{text-align:center;color:#c9b86a;font-size:13px;padding:30px 10px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#ffd700;color:#000;padding:12px 18px;border-radius:20px;font-weight:bold;font-size:13px;display:none;z-index:100}
+#ownerArea{display:none}
+.linkChat{display:block;margin:0 12px 12px;padding:13px;text-align:center;background:linear-gradient(135deg,#ffd700,#b8860b);color:#000;border-radius:12px;font-weight:900;text-decoration:none;font-size:13px}
+.pantauBox{margin:0 12px 12px;background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.4);border-radius:16px;padding:12px}
+.pantauBox b{color:#ffd700;font-size:13px}
+.pantauRow{display:flex;gap:8px;margin-top:10px}
+.pantauMini{flex:1;background:rgba(0,0,0,0.4);border:1px solid rgba(255,215,0,0.3);border-radius:12px;padding:10px;text-align:center}
+.pantauMini b{font-size:18px;display:block}
+.pantauMini small{font-size:10px;color:#e8d48a}
+.barRow{margin-top:8px}
+.barRow small{font-size:11px;color:#e8d48a;display:flex;justify-content:space-between}
+.barBg{height:10px;background:rgba(0,0,0,0.5);border:1px solid rgba(255,215,0,0.3);border-radius:20px;overflow:hidden;margin-top:4px}
+.barFill{height:100%;background:linear-gradient(90deg,#fff8c5,#ffd700,#b8860b);width:0%;transition:width .5s}
+.logItem{background:rgba(0,0,0,0.35);border:1px solid rgba(255,215,0,0.25);border-radius:10px;padding:8px 10px;margin-top:8px;font-size:12px;line-height:1.4}
+.logItem b{color:#ffd700}
+.logItem small{color:#c9b86a;font-size:10px;display:block;margin-top:2px}
+.livePill{display:inline-block;background:#22c55e;color:#000;font-size:10px;font-weight:900;padding:3px 8px;border-radius:20px}
+.pintasan{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:0 12px 12px}
+.pintasan a{padding:11px 6px;border-radius:12px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.4);color:#ffd700;text-decoration:none;text-align:center;font-size:11px;font-weight:900;line-height:1.3}
+.pintasan a small{display:block;font-size:9px;color:#e8d48a;font-weight:400;margin-top:2px}
+.editCard{background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.35);border-radius:16px;padding:12px}
+.editCard.off{opacity:.5}
+.editCard img{width:100%;height:130px;object-fit:cover;border-radius:12px;display:block;border:1px solid rgba(255,215,0,0.3)}
+.editCard label{font-size:10px;color:#e8d48a;display:block;margin-top:8px}
+.editCard input,.editCard textarea,.editCard select{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,215,0,0.4);background:rgba(0,0,0,0.6);color:#fff;outline:none;margin-top:4px;font-size:13px}
+.editCard textarea{min-height:60px;resize:vertical}
+.editRow{display:flex;gap:8px}
+.editRow div{flex:1}
+.syncBox{margin:0 12px 12px;padding:10px;border-radius:12px;border:1px solid rgba(255,215,0,0.4);background:rgba(0,0,0,0.4);font-size:12px;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="lock" id="lockScreen">
+  <div style="font-size:50px">👑</div><b>OWNER ONLY</b>
+  <p>Halaman ini khusus owner.<br>Buat liat ORDER + PANTAU + EDIT TOKO.</p>
+  <input type="password" id="passInput" placeholder="Masukin password..." onkeydown="if(event.key==='Enter') cekPass()">
+  <button onclick="cekPass()">BUKA 🔓</button>
+  <a href="index.html" style="color:#e8d48a;font-size:12px;margin-top:14px;display:block">← Balik ke Toko</a>
+</div>
+<div id="ownerArea">
+  <div class="topBar">
+    <button class="navBtn" onclick="toggleNav()"><span></span><span></span><span></span></button>
+    <div><small>// OWNER PANEL_</small><b>👑 ALFARIZI</b></div>
+    <button class="logout" onclick="logout()">Keluar 🔒</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><b id="totalOrder">0</b><small>ORDER</small></div>
+    <div class="stat"><b id="totalChat">0</b><small>CHAT MASUK</small></div>
+  </div>
+  <div class="pintasan">
+    <a href="index.html">🛍️ LIHAT TOKO<small>Cek tampilan pembeli</small></a>
+    <a href="notifikasi.html">🔔 NOTIFIKASI<small>Order + Chat baru</small></a>
+    <a href="owner-chat.html">💬 BALES CHAT<small>Jadi owner_sabi</small></a>
+  </div>
+  <a class="linkChat" href="owner-chat.html">💬 Bales Chat → Buka owner-chat.html</a>
+  <div class="actions"><button class="btnNotif" onclick="aktifkanNotif()">🔔 Aktifin Notif HP</button><button class="btnRefresh" onclick="cekSemua(true)">🔄 Refresh</button></div>
+  <div class="tabs"><button id="tabPantau" class="on" onclick="setTab('pantau')">👁️ Pantau</button><button id="tabOrder" onclick="setTab('order')">🛒 Order</button><button id="tabEdit" onclick="setTab('edit')">✏️ Edit Toko</button></div>
+  <div class="actions" id="actionsHapus"><button class="btnDelAll" onclick="hapusSemua()">🗑️ Hapus Semua (Tab yang lagi dibuka)</button></div>
+  <div class="chat" id="chatList"><div class="empty">⏳ Lagi nyambung...</div></div>
+</div>
+</div>
+<div class="overlay" id="overlay" onclick="closeNav()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawerHead"><div class="logo">👑</div><div><b>ALFARIZI</b><small>OWNER PANEL</small></div><button class="drawerClose" onclick="closeNav()">✕</button></div>
+  <div class="drawerSection">MENU UTAMA</div>
+  <a class="drawerItem" href="index.html"><span class="ico">🏠</span><span>Toko<small>Lihat semua makanan & minuman</small></span><span class="arrow">›</span></a>
+  <a class="drawerItem" href="chat.html"><span class="ico">💬</span><span>Chat<small>Ngobrol sama semua orang</small></span><span class="arrow">›</span></a>
+  <a class="drawerItem" href="komunitas.html"><span class="ico">👥</span><span>Komunitas<small>Chat sama pembeli / admin</small></span><span class="arrow">›</span></a>
+  <a class="drawerItem on" href="owner.html"><span class="ico">👑</span><span>Owner<small>Order + Pantau + Edit Toko</small></span><span class="arrow">›</span></a>
+  <a class="drawerItem" href="notifikasi.html"><span class="ico">🔔</span><span>Notifikasi<small>Order + Chat baru</small></span><span class="arrow">›</span></a>
+  <a class="drawerItem" href="cart.html"><span class="ico">🛒</span><span>Keranjang<small>Liat barang yang lu pilih</small></span><span class="arrow">›</span></a>
+  <div class="drawerSection">LAINNYA</div>
+  <a class="drawerItem" href="#" onclick="alert('Hubungi Admin via WA: 0881022734231')"><span class="ico">📞</span><span>Hubungi Admin<small>Chat WhatsApp</small></span><span class="arrow">›</span></a>
+  <div style="padding:16px;text-align:center;font-size:11px;color:#888">ALFARIZI • Owner Only • Emas</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const OWNER_PASSWORD = "rizi123";
+const NPOINT_ORDER_ID = "67721059d7f24e580ead";
+const CHAT_NPOINT_ID = "b5e3df3be4b06e68a436";
+const PRODUK_NPOINT_ID = "fe36cfafb59e6e243b93";
+const URL_ORDER = "https://api.npoint.io/" + NPOINT_ORDER_ID;
+const URL_CHAT = "https://api.npoint.io/" + CHAT_NPOINT_ID;
+const URL_PRODUK = "https://api.npoint.io/" + PRODUK_NPOINT_ID;
+let orders=[], chats=[], allOrderData=[], tab='pantau', lastOrderJson='', lastChatJson='', sedangHapus=false, activityLog=[];
+let pengunjungHariIni = parseInt(localStorage.getItem('alfarizi_visit_today')||'0');
+let lastVisitDate = localStorage.getItem('alfarizi_visit_date')||'';
+let todayStr = new Date().toLocaleDateString('id-ID');
+if(lastVisitDate!==todayStr){ pengunjungHariIni=0; localStorage.setItem('alfarizi_visit_date', todayStr); }
+function showToast(t){ let el=document.getElementById('toast'); el.innerText=t; el.style.display='block'; setTimeout(()=>el.style.display='none',3000); }
+function cekPass(){ let p=document.getElementById('passInput').value; if(p===OWNER_PASSWORD){ localStorage.setItem('ownerLogin','ya'); bukaOwner(); } else { alert('❌ Password salah!'); document.getElementById('passInput').value=''; } }
+function bukaOwner(){ document.getElementById('lockScreen').style.display='none'; document.getElementById('ownerArea').style.display='block'; loadProdukDariServer(); cekSemua(false); setInterval(()=>{ if(tab!=='edit') cekSemua(false); }, 3000); }
+function logout(){ localStorage.removeItem('ownerLogin'); location.reload(); }
+function toggleNav(){ let d=document.getElementById('drawer'); let o=document.getElementById('overlay'); if(!d.classList.contains('open')){ d.classList.add('open'); o.classList.add('show'); } else closeNav(); }
+function closeNav(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
+function setTab(t){ tab=t; document.getElementById('tabPantau').classList.toggle('on', t==='pantau'); document.getElementById('tabOrder').classList.toggle('on', t==='order'); document.getElementById('tabEdit').classList.toggle('on', t==='edit'); document.getElementById('actionsHapus').style.display = t==='edit' ? 'none' : 'flex'; if(t==='edit') loadProdukDariServer(); else render(); }
+function aktifkanNotif(){ if(!('Notification' in window)){ alert('HP lu gak support notif'); return; } Notification.requestPermission().then(p=>{ if(p==='granted'){ showToast('✅ Notif aktif!'); if(navigator.vibrate) navigator.vibrate([300,100,300]); } }); }
+function bunyiBaru(){ try{ let ctx=new (window.AudioContext||window.webkitAudioContext)(); [880,1200].forEach((f,i)=>{ setTimeout(()=>{ let o=ctx.createOscillator(); let g=ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.frequency.value=f; o.type='sine'; g.gain.value=0.4; o.start(); setTimeout(()=>o.stop(),400); }, i*350); }); }catch(e){} if(navigator.vibrate) navigator.vibrate([300,100,300]); }
+function tambahLog(emoji, judul, detail){ activityLog.unshift({emoji, judul, detail, time:new Date().toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',second:'2-digit'})}); if(activityLog.length>20) activityLog=activityLog.slice(0,20); }
+async function cekSemua(manual){
+  if(sedangHapus) return;
+  try{ let r=await fetch(URL_ORDER,{cache:'no-store'}); let d=await r.json(); if(!Array.isArray(d)) d=[];
+    if(lastOrderJson && JSON.stringify(d)!==lastOrderJson){ let lama=JSON.parse(lastOrderJson); let baru=d.filter(x=>!lama.some(y=>y.id===x.id)); baru.forEach(x=>{ if(x.isOrder){ tambahLog('🛒','Order baru masuk','Dari: '+(x.teks||'').split('\n')[0]); } else if(x.isOwner){ tambahLog('👑','Lu bales order',''+(x.teks||'').slice(0,60)); } }); if(baru.length){ bunyiBaru(); showToast('🔔 Ada aktivitas baru di web lu!'); } }
+    lastOrderJson=JSON.stringify(d); allOrderData=d; orders=d.filter(x=>x && (x.isOrder===true || x.isOwner===true));
+  }catch(e){}
+  try{ let r=await fetch(URL_CHAT,{cache:'no-store'}); let d=await r.json(); if(!Array.isArray(d)) d=[]; if(lastChatJson && JSON.stringify(d)!==lastChatJson){ let lama=JSON.parse(lastChatJson); let baru=d.filter(x=>!lama.some(y=>y.id===x.id)); baru.forEach(x=>{ tambahLog('💬','Chat baru',''+(x.nama||'Anonim')+': '+(x.teks||'').slice(0,60)); }); if(baru.length){ bunyiBaru(); showToast('💬 Ada chat baru!'); } } lastChatJson=JSON.stringify(d); chats=d; }catch(e){}
+  document.getElementById('totalOrder').innerText=allOrderData.filter(x=>x && x.isOrder).length;
+  document.getElementById('totalChat').innerText=chats.length;
+  if(tab!=='edit') render();
+}
+async function hapusSatuOrder(id){ if(!confirm('Hapus ini?')) return; sedangHapus=true; try{ let r=await fetch(URL_ORDER,{cache:'no-store'}); let d=await r.json(); if(Array.isArray(d)) { let all=d.filter(x=>String(x.id)!==String(id)); await fetch(URL_ORDER,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(all)}); } }catch(e){} sedangHapus=false; cekSemua(true); showToast('🗑️ Dihapus'); }
+async function hapusSemua(){ if(!confirm('Hapus semua di tab '+tab+'?')) return; sedangHapus=true; try{ if(tab==='order'){ let r=await fetch(URL_ORDER,{cache:'no-store'}); let d=await r.json(); if(Array.isArray(d)){ let sisa=d.filter(x=>!(x.isOrder || x.isOwner)); await fetch(URL_ORDER,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(sisa)}); } } else { activityLog=[]; } }catch(e){} sedangHapus=false; cekSemua(true); showToast('🧹 Kehapus semua!'); }
+async function balasOrder(id){ let teks=prompt('Bales pesanan ini:'); if(!teks) return; let namaTarget=prompt('Bales ke siapa? (tulis nama pembeli, kosongin kalo bales umum)',''); sedangHapus=true; try{ let r=await fetch(URL_ORDER,{cache:'no-store'}); let d=await r.json(); if(!Array.isArray(d)) d=[]; d.push({id:Date.now(), nama:'👑 owner_sabi', teks:(namaTarget ? '@'+namaTarget+' : ' : '')+teks, time:new Date().toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}), isOwner:true}); if(d.length>300) d=d.slice(-300); await fetch(URL_ORDER,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}); }catch(e){} sedangHapus=false; cekSemua(true); showToast('✅ Balesan terkirim!'); }
+/* ===== EDIT TOKO - SIMPAN KE SERVER, BUKAN CUMA HP LU ===== */
+const PRODUK_AWAL=[
+{id:1,nama:'Seblak - Pedas Nampol',kat:'makanan',harga:25000,diskon:35000,rate:'⭐ 4.9 (540)',foto:'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=500&q=80',deskripsi:'Seblak pedas nampol, kerupuk kenyal + kuah pedas gurih yang nagih.',aktif:true},
+{id:2,nama:'Keripik Singkong 500g',kat:'makanan',harga:30000,diskon:45000,rate:'⭐ 4.8 (310)',foto:'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=500&q=80',deskripsi:'Keripik singkong renyah 500 gram, digoreng garing.',aktif:true},
+{id:3,nama:'Ayam Geprek - Level 5',kat:'makanan',harga:28000,diskon:38000,rate:'⭐ 4.9 (420)',foto:'https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?w=500&q=80',deskripsi:'Ayam geprek crispy di luar, juicy di dalem.',aktif:true},
+{id:4,nama:'Dimsum - Isi 8',kat:'makanan',harga:35000,diskon:45000,rate:'⭐ 4.8 (210)',foto:'https://images.unsplash.com/photo-1625398407796-82650a8319c5?w=500&q=80',deskripsi:'Dimsum isi 8, daging ayam juicy.',aktif:true},
+{id:5,nama:'Cilok Kuah Pedas',kat:'makanan',harga:15000,diskon:20000,rate:'⭐ 4.9 (380)',foto:'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=500&q=80',deskripsi:'Cilok kenyal isi daging, kuah pedas gurih.',aktif:true},
+{id:6,nama:'Es Teh Manis Jumbo',kat:'minuman',harga:10000,diskon:15000,rate:'⭐ 4.9 (620)',foto:'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=500&q=80',deskripsi:'Es teh manis jumbo, tehnya wangi.',aktif:true},
+{id:7,nama:'Es Kopi Susu Gula Aren',kat:'minuman',harga:18000,diskon:25000,rate:'⭐ 4.8 (450)',foto:'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=500&q=80',deskripsi:'Es kopi susu gula aren, kopinya pekat.',aktif:true},
+{id:8,nama:'Jus Alpukat + Coklat',kat:'minuman',harga:22000,diskon:30000,rate:'⭐ 4.9 (290)',foto:'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=500&q=80',deskripsi:'Jus alpukat asli + coklat, creamy.',aktif:true},
+{id:9,nama:'Boba Brown Sugar',kat:'minuman',harga:20000,diskon:28000,rate:'⭐ 4.8 (510)',foto:'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=500&q=80',deskripsi:'Boba brown sugar, bobanya kenyal.',aktif:true},
+{id:10,nama:'Es Jeruk Peras Murni',kat:'minuman',harga:12000,diskon:18000,rate:'⭐ 4.9 (340)',foto:'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=500&q=80',deskripsi:'Es jeruk peras murni 100% jeruk asli.',aktif:true},
+];
+let produkEdit=JSON.parse(JSON.stringify(PRODUK_AWAL));
+let produkLoading=false;
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+async function loadProdukDariServer(){
+  if(PRODUK_NPOINT_ID==='GANTI_ID_PRODUK_LU'){ if(tab==='edit') renderEdit('⚠️ ID PRODUK BELUM DIGANTI! Bikin bin baru di npoint.io, terus ganti GANTI_ID_PRODUK_LU di owner.html + index.html'); return; }
+  produkLoading=true; if(tab==='edit') renderEdit('⏳ Lagi ngambil harga dari server...');
+  try{ let r=await fetch(URL_PRODUK,{cache:'no-store'}); let d=await r.json(); if(Array.isArray(d)&&d.length){ produkEdit=d; } else if(Array.isArray(d)&&!d.length){ await fetch(URL_PRODUK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(PRODUK_AWAL)}); } }catch(e){}
+  produkLoading=false; if(tab==='edit') renderEdit('');
+}
+function updateField(i,field,val){ produkEdit[i][field]=val; let el=document.getElementById('info-'+i); if(el){ let p=produkEdit[i]; let persen=p.diskon>p.harga?Math.round((1-p.harga/p.diskon)*100):0; el.innerText='Diskon: -'+persen+'% • Tampil: Rp '+Number(p.harga||0).toLocaleString('id-ID')+' • Belum disimpan, klik SIMPAN PRODUK INI'; el.style.color='#ffcc00'; } }
+async function simpanSatuProduk(i){
+  if(PRODUK_NPOINT_ID==='GANTI_ID_PRODUK_LU'){ alert('Ganti dulu ID produk lu di owner.html! Bikin bin baru di npoint.io'); return; }
+  let btn=document.getElementById('save-'+i); if(btn) btn.innerText='⏳ Nyimpen...';
+  try{ await fetch(URL_PRODUK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(produkEdit)}); showToast('✅ '+produkEdit[i].nama+' ke-save! Harga baru udah live di Toko'); let el=document.getElementById('info-'+i); if(el){ el.innerText='✅ Udah tersimpan ke server, pembeli langsung liat harga baru'; el.style.color='#22c55e'; } }catch(e){ alert('Gagal nyimpen, cek internet lu'); }
+  if(btn) btn.innerText='💾 SIMPAN PRODUK INI';
+}
+async function simpanSemuaProduk(){
+  if(PRODUK_NPOINT_ID==='GANTI_ID_PRODUK_LU'){ alert('Ganti dulu ID produk lu!'); return; }
+  try{ await fetch(URL_PRODUK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(produkEdit)}); showToast('✅ SEMUA harga ke-save! Buka Toko, udah berubah'); }catch(e){ alert('Gagal, cek internet'); }
+}
+function renderEdit(pesan){
+  let list=document.getElementById('chatList');
+  list.innerHTML = `<div class="pantauBox"><b>✏️ EDIT TOKO - UBAH HARGA LANGSUNG LIVE</b><div style="font-size:12px;color:#e8d48a;margin-top:6px">Cara bener: ubah harga di bawah → klik <b style="color:#fff">💾 SIMPAN PRODUK INI</b> di produk itu → buka Toko, harga langsung berubah di SEMUA HP.<br>Jangan cuma ngetik doang tanpa klik Simpan!</div><div class="syncBox" id="syncStatus">${pesan||'✅ Nyambung ke server produk • '+produkEdit.length+' produk'}</div><div class="btnRow"><button class="btnBalas" onclick="simpanSemuaProduk()">💾 SIMPAN SEMUA</button><button class="delBtn" onclick="tambahProduk()">➕ Tambah Produk</button></div><div class="btnRow"><button class="btnBalas" style="background:#fff;color:#000" onclick="location.href='index.html'">🛍️ Liat Hasil di Toko →</button><button class="delBtn" onclick="resetProduk()">🔄 Reset ke Awal</button></div></div>`
+    + produkEdit.map((p,i)=>{ let persen=p.diskon>p.harga?Math.round((1-p.harga/p.diskon)*100):0; return `<div class="editCard ${p.aktif===false?'off':''}"><img src="${esc(p.foto)}" onerror="this.src='https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500&q=80'"><label>NAMA PRODUK</label><input value="${esc(p.nama)}" onchange="updateField(${i},'nama',this.value)"><div class="editRow"><div><label>HARGA JUAL (Rp)</label><input type="number" value="${p.harga}" onchange="updateField(${i},'harga',+this.value||0)"></div><div><label>HARGA CORET (Rp)</label><input type="number" value="${p.diskon}" onchange="updateField(${i},'diskon',+this.value||0)"></div></div><div id="info-${i}" style="font-size:11px;color:#ffd700;margin-top:6px">Diskon: -${persen}% • Tampil: Rp ${Number(p.harga||0).toLocaleString('id-ID')}</div><div class="editRow"><div><label>KATEGORI</label><select onchange="updateField(${i},'kat',this.value)"><option value="makanan" ${p.kat==='makanan'?'selected':''}>🍜 Makanan</option><option value="minuman" ${p.kat==='minuman'?'selected':''}>🥤 Minuman</option></select></div><div><label>RATING</label><input value="${esc(p.rate)}" onchange="updateField(${i},'rate',this.value)"></div></div><label>LINK FOTO</label><input value="${esc(p.foto)}" onchange="updateField(${i},'foto',this.value)"><label>DESKRIPSI</label><textarea onchange="updateField(${i},'deskripsi',this.value)">${esc(p.deskripsi)}</textarea><div class="btnRow"><button class="btnBalas" id="save-${i}" onclick="simpanSatuProduk(${i})">💾 SIMPAN PRODUK INI</button><button class="btnBalas" style="background:#fff;color:#000" onclick="produkEdit[${i}].aktif = produkEdit[${i}].aktif===false ? true : false; renderEdit('')"> ${p.aktif===false?'👁️ Tampilkan':'🙈 Sembunyikan'}</button></div><div class="btnRow"><button class="delBtn" onclick="hapusProduk(${i})">🗑️ Hapus Produk Ini</button></div></div>`; }).join('');
+}
+function tambahProduk(){ produkEdit.push({id:Date.now(),nama:'Produk Baru',kat:'makanan',harga:10000,diskon:15000,rate:'⭐ 5.0 (0)',foto:'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500&q=80',deskripsi:'Deskripsi produk baru...',aktif:true}); renderEdit('➕ Produk baru ditambah, isi lalu klik SIMPAN PRODUK INI'); }
+async function hapusProduk(i){ if(!confirm('Hapus produk ini?')) return; produkEdit.splice(i,1); await simpanSemuaProduk(); renderEdit('🗑️ Produk dihapus + ke-save'); }
+async function resetProduk(){ if(!confirm('Balikin semua ke harga awal?')) return; produkEdit=JSON.parse(JSON.stringify(PRODUK_AWAL)); await simpanSemuaProduk(); renderEdit('🔄 Udah dibalikin ke awal'); }
+function render(){ let list=document.getElementById('chatList'); if(tab==='edit'){ renderEdit(''); return; } if(tab==='pantau'){ let totalAkt=orders.length+chats.length; let maxVal=Math.max(1,orders.filter(x=>x.isOrder).length,chats.length); let logHtml=activityLog.length?activityLog.map(l=>`<div class="logItem">${l.emoji} <b>${l.judul}</b> - ${l.detail}<small>🕒 ${l.time}</small></div>`).join(''):`<div class="empty">Belum ada aktivitas baru.</div>`; list.innerHTML=`<div class="pantauBox"><b>👁️ PANTAU WEB - LIVE</b> <span class="livePill">● LIVE</span><div style="font-size:12px;color:#e8d48a;margin-top:6px">Terakhir dicek: ${new Date().toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',second:'2-digit'})} • <b style="color:#22c55e">Web Online ✅</b></div><div class="pantauRow"><div class="pantauMini"><b>${pengunjungHariIni+totalAkt}</b><small>AKTIVITAS HARI INI</small></div><div class="pantauMini"><b>${orders.filter(x=>x.isOrder).length}</b><small>ORDER MASUK</small></div><div class="pantauMini"><b>${chats.length}</b><small>CHAT MASUK</small></div></div><div class="barRow"><small><span>🛒 Order</span><span>${orders.filter(x=>x.isOrder).length}</span></small><div class="barBg"><div class="barFill" style="width:${Math.round(orders.filter(x=>x.isOrder).length/maxVal*100)}%"></div></div></div><div class="barRow"><small><span>💬 Chat</span><span>${chats.length}</span></small><div class="barBg"><div class="barFill" style="width:${Math.round(chats.length/maxVal*100)}%"></div></div></div></div><div class="pantauBox"><b>📜 LOG AKTIVITAS TERBARU</b>${logHtml}</div>`; return; } if(!orders.length){ list.innerHTML=`<div class="empty">Belum ada order.</div>`; return; } list.innerHTML=[...orders].reverse().map(c=>{ let isBalasan=!!c.isOwner; return `<div class="chatItem ${isBalasan?'balesan':''}"><div class="chatTop"><div class="ava">${isBalasan?'👑':'🛒'}</div><b>${c.nama} ${isBalasan?'(Balesan lu)':''}</b><small>${c.time||''}</small></div><p>${c.teks}</p>${!isBalasan?`<div class="btnRow"><button class="btnBalas" onclick="balasOrder('${c.id}')">💬 Balas Pesanan Ini</button><button class="delBtn" onclick="hapusSatuOrder('${c.id}')">🗑️ Hapus</button></div>`:`<div class="btnRow"><button class="delBtn" onclick="hapusSatuOrder('${c.id}')">🗑️ Hapus Balesan Ini</button></div>`}</div>`; }).join(''); }
+if(localStorage.getItem('ownerLogin')==='ya'){ bukaOwner(); }
+</script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TOKO ONLINE - ALFARIZI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif}
+/* SCROLL BIASA AJA, KAYAK WEB NORMAL */
+html{scroll-behavior:auto}
+body{background:linear-gradient(180deg,#000,#111,#1a1a1a,#000);color:#fff;min-height:100vh;overflow-x:hidden}
+.wrap{max-width:480px;margin:0 auto;background:linear-gradient(180deg,rgba(0,0,0,0.55),rgba(40,40,40,0.45),rgba(0,0,0,0.7));min-height:100vh;border-left:1px solid rgba(255,255,255,0.25);border-right:1px solid rgba(255,255,255,0.25)}
+/* TOPBAR - LEBIH HITAM, ABU DIKIT */
+.topBar{display:flex;align-items:center;gap:10px;padding:10px 12px;background:linear-gradient(135deg,rgba(0,0,0,0.85),rgba(60,60,60,0.65),rgba(255,255,255,0.35));border-bottom:1px solid rgba(255,255,255,0.3);position:sticky;top:0;z-index:20}
+.navBtn{width:44px;height:44px;background:linear-gradient(135deg,rgba(0,0,0,0.8),rgba(70,70,70,0.6),rgba(255,255,255,0.3));border:1px solid rgba(255,255,255,0.4);border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px}
+.navBtn span{display:block;width:20px;height:3px;background:#fff;border-radius:3px}
+.topBarTitle{flex:1}
+.topBarTitle small{color:#ccc;letter-spacing:2px;font-size:9px}
+.topBarTitle b{font-size:16px;display:block;color:#fff}
+.cartBtn{width:44px;height:44px;background:linear-gradient(135deg,rgba(0,0,0,0.85),rgba(70,70,70,0.6),rgba(255,255,255,0.3));border:1px solid rgba(255,255,255,0.4);border-radius:10px;font-size:20px;position:relative;color:#fff}
+.cartBtn i{position:absolute;top:-5px;right:-5px;background:#fff;color:#000;font-size:11px;min-width:20px;height:20px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-style:normal;padding:0 4px}
+.overlay{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.6);z-index:9998;display:none}
+.overlay.show{display:block}
+/* DRAWER - LEBIH HITAM */
+.drawer{position:fixed;top:0;left:-300px;width:280px;max-width:85vw;height:100vh;background:linear-gradient(180deg,rgba(0,0,0,0.95),rgba(40,40,40,0.9),rgba(255,255,255,0.25));border-right:1px solid rgba(255,255,255,0.3);z-index:9999;transition:left .3s;overflow-y:auto;color:#fff}
+.drawer.open{left:0}
+.drawerHead{padding:18px 16px;background:linear-gradient(135deg,rgba(0,0,0,0.9),rgba(50,50,50,0.7),rgba(255,255,255,0.2));border-bottom:1px solid rgba(255,255,255,0.3);display:flex;align-items:center;gap:12px;color:#fff}
+.drawerHead .logo{width:48px;height:48px;background:linear-gradient(135deg,#000,#555,#fff);border:1px solid rgba(255,255,255,0.4);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px}
+.drawerHead b{font-size:16px;color:#fff}
+.drawerHead small{color:#ccc;font-size:11px}
+.drawerClose{margin-left:auto;width:36px;height:36px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:8px;color:#fff;font-size:18px}
+.drawerSection{padding:12px 16px 4px;font-size:10px;letter-spacing:2px;color:#999;font-weight:bold}
+.drawerItem{display:flex;align-items:center;gap:12px;padding:15px 16px;color:#fff;font-size:14px;font-weight:600;border-bottom:1px solid rgba(255,255,255,0.12);text-decoration:none}
+.drawerItem.on{background:linear-gradient(90deg,rgba(255,255,255,0.25),rgba(0,0,0,0.6));color:#fff}
+.drawerItem .ico{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,rgba(255,255,255,0.25),rgba(0,0,0,0.6));border:1px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;font-size:20px}
+.drawerItem small{display:block;font-size:11px;color:#bbb;font-weight:400}
+.drawerItem .arrow{margin-left:auto;color:#888}
+/* BANNER - LEBIH HITAM */
+.banner{margin:12px 10px;background:linear-gradient(135deg,rgba(0,0,0,0.85),rgba(60,60,60,0.55),rgba(255,255,255,0.3));border:1px solid rgba(255,255,255,0.35);border-radius:20px;padding:18px;box-shadow:0 12px 30px rgba(0,0,0,.5);position:relative;overflow:hidden;color:#fff}
+.banner small{background:#fff;color:#000;padding:4px 8px;border-radius:20px;font-weight:bold;font-size:10px}
+.banner h1{font-size:26px;line-height:1;margin:10px 0 6px;color:#fff}
+.banner p{font-size:12px;color:#ddd}
+.banner button{margin-top:12px;padding:10px 16px;background:#fff;color:#000;border:none;border-radius:10px;font-weight:bold}
+.banner img{position:absolute;right:-10px;bottom:-10px;width:120px;height:120px;object-fit:cover;border-radius:20px;opacity:.9;border:3px solid rgba(255,255,255,.4)}
+/* SEARCH - LEBIH HITAM */
+.search{margin:0 10px 12px;display:flex;gap:8px}
+.search input{flex:1;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.35);background:linear-gradient(135deg,rgba(0,0,0,0.75),rgba(60,60,60,0.5),rgba(255,255,255,0.2));color:#fff;outline:none}
+.search input::placeholder{color:#aaa}
+.search button{padding:12px 14px;background:#fff;color:#000;border:none;border-radius:12px;font-weight:bold}
+.cats{display:flex;gap:8px;padding:0 10px 12px;overflow-x:auto}
+.cats button{white-space:nowrap;padding:8px 14px;border-radius:20px;border:1px solid rgba(255,255,255,0.3);background:linear-gradient(135deg,rgba(0,0,0,0.7),rgba(70,70,70,0.5),rgba(255,255,255,0.2));color:#fff;font-weight:bold;font-size:12px}
+.cats button.on{background:#fff;color:#000;border-color:#fff}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 10px 24px}
+/* CARD PRODUK - LEBIH HITAM, ABU DIKIT */
+.card{background:linear-gradient(135deg,rgba(255,255,255,0.55),rgba(90,90,90,0.45),rgba(0,0,0,0.75));border:1px solid rgba(255,255,255,0.35);color:#fff;border-radius:20px;overflow:hidden;box-shadow:0 12px 28px rgba(0,0,0,.5)}
+.cardImg{height:160px;overflow:hidden;position:relative;background:#222}
+.cardImg img{width:100%;height:100%;object-fit:cover;display:block}
+.cardImg .diskon{position:absolute;top:8px;left:8px;background:#fff;color:#000;font-size:10px;font-weight:bold;padding:4px 7px;border-radius:20px}
+.cardBody{padding:10px;background:linear-gradient(180deg,rgba(0,0,0,0.35),rgba(60,60,60,0.25))}
+.cardBody small{color:#bbb;font-size:10px}
+.cardBody b{font-size:13px;display:block;line-height:1.3;min-height:34px;color:#fff}
+.stars{color:#fff;font-size:11px;margin:4px 0}
+.price{color:#fff;font-weight:900;font-size:14px}
+.price s{color:#aaa;font-size:11px;font-weight:400}
+.cardBody button{width:100%;margin-top:8px;padding:10px;background:#fff;color:#000;border:none;border-radius:10px;font-weight:bold}
+.cardBody button.added{background:#888;color:#fff}
+.footer{text-align:center;font-size:11px;color:#aaa;padding:14px}
+/* CART - LEBIH HITAM */
+.cartBox{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:linear-gradient(180deg,rgba(0,0,0,0.95),rgba(50,50,50,0.9),rgba(255,255,255,0.2));border:1px solid rgba(255,255,255,0.35);color:#fff;border-radius:20px 20px 0 0;padding:16px;z-index:10000;display:none;max-height:70vh;overflow-y:auto;box-shadow:0 -10px 30px rgba(0,0,0,.5)}
+.cartBox.show{display:block}
+.cartItem{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.15);font-size:13px;align-items:center}
+.cartItem img{width:48px;height:48px;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,0.3)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="topBar">
+  <button class="navBtn" onclick="toggleNav()"><span></span><span></span><span></span></button>
+  <div class="topBarTitle"><small>// ALFARIZI</small><b>TOKO ONLINE</b></div>
+  <button class="cartBtn" onclick="toggleCart()">🛒<i id="cartCount">0</i></button>
+</div>
+
+<div class="banner"><small>🔥 PROMO HARI INI</small><h1>TOKO ONLINE<br>ALFARIZI</h1><p>Makanan & Minuman Enak,<br>Siap Kirim Cepat.</p><button onclick="document.getElementById('grid').scrollIntoView()">🛍️ BELANJA SEKARANG</button><img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=80" alt="Makanan"></div>
+
+<div class="search"><input id="cari" placeholder="Cari makanan / minuman... contoh: seblak" oninput="filterProduk()"><button onclick="filterProduk()">🔍</button></div>
+
+<div class="cats">
+<button class="on" onclick="filterKat('semua',this)">Semua</button>
+<button onclick="filterKat('makanan',this)">🍜 Makanan</button>
+<button onclick="filterKat('minuman',this)">🥤 Minuman</button>
+</div>
+
+<div class="grid" id="grid"></div>
+<div class="footer">ALFARIZI • Toko Makanan & Minuman • Klik titik tiga garis di atas buat buka Dashboard & Parlo<br>Order via WhatsApp • COD • Transfer</div>
+</div>
+
+<div class="overlay" id="overlay" onclick="closeNav();closeCart()"></div>
+
+<!-- NAV TITIK TIGA GARIS -->
+<div class="drawer" id="drawer">
+  <div class="drawerHead"><div class="logo">🛍️</div><div><b>ALFARIZI</b><small>TOKO ONLINE</small></div><button class="drawerClose" onclick="closeNav()">✕</button></div>
+  <div class="drawerSection">MENU UTAMA</div>
+  <a class="drawerItem on" href="index.html"><span class="ico">🏠</span><span>Toko<small>Lihat semua makanan & minuman</small></span><span class="arrow">›</span></a>
+  <a class="drawerItem" href="dashboard.html"><span class="ico">📊</span><span>Dashboard<small>Omset, pesanan, stok</small></span><span class="arrow">›</span></a>
+  <a class="drawerItem" href="komunitas.html"><span class="ico">💬</span><span>Komunitas / Parlo<small>Chat sama pembeli / admin</small></span><span class="arrow">›</span></a>
+  <div class="drawerSection">LAINNYA</div>
+  <a class="drawerItem" href="#" onclick="alert('Hubungi Admin via WA: 0881022734231')"><span class="ico">📞</span><span>Hubungi Admin<small>Chat WhatsApp</small></span><span class="arrow">›</span></a>
+  <div style="padding:16px;text-align:center;font-size:11px;color:#888">ALFARIZI • Toko Online<br>File Pisah: index + dashboard + parlo</div>
+</div>
+
+<div class="cartBox" id="cartBox">
+  <div style="display:flex;justify-content:space-between;align-items:center"><b>🛒 KERANJANG LU</b><button onclick="closeCart()" style="padding:6px 10px;border:1px solid rgba(255,255,255,0.3);border-radius:8px;background:#fff;color:#000">✕</button></div>
+  <div id="cartList" style="margin-top:10px"><p style="color:#aaa;font-size:13px">Keranjang masih kosong, pilih produk dulu.</p></div>
+  <div style="display:flex;justify-content:space-between;font-weight:900;margin-top:12px"><span>Total:</span><span id="cartTotal">Rp 0</span></div>
+  <button onclick="checkoutWA()" style="width:100%;margin-top:12px;padding:14px;background:#fff;color:#000;border:none;border-radius:12px;font-weight:900;font-size:15px">💬 CHECKOUT VIA WHATSAPP</button>
+  <button onclick="clearCart()" style="width:100%;margin-top:8px;padding:10px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:12px;color:#fff">Hapus Semua</button>
+</div>
+
+<script>
+let produk=[
+{id:1,nama:'Seblak - Pedas Nampol',kat:'makanan',harga:25000,diskon:35000,rate:'⭐ 4.9 (540)',foto:'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=500&q=80'},
+{id:2,nama:'Keripik Singkong 500g',kat:'makanan',harga:30000,diskon:45000,rate:'⭐ 4.8 (310)',foto:'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=500&q=80'},
+{id:3,nama:'Ayam Geprek - Level 5',kat:'makanan',harga:28000,diskon:38000,rate:'⭐ 4.9 (420)',foto:'https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?w=500&q=80'},
+{id:4,nama:'Dimsum - Isi 8',kat:'makanan',harga:35000,diskon:45000,rate:'⭐ 4.8 (210)',foto:'https://images.unsplash.com/photo-1625398407796-82650a8319c5?w=500&q=80'},
+{id:5,nama:'Cilok Kuah Pedas',kat:'makanan',harga:15000,diskon:20000,rate:'⭐ 4.9 (380)',foto:'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=500&q=80'},
+{id:6,nama:'Es Teh Manis Jumbo',kat:'minuman',harga:10000,diskon:15000,rate:'⭐ 4.9 (620)',foto:'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=500&q=80'},
+{id:7,nama:'Es Kopi Susu Gula Aren',kat:'minuman',harga:18000,diskon:25000,rate:'⭐ 4.8 (450)',foto:'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=500&q=80'},
+{id:8,nama:'Jus Alpukat + Coklat',kat:'minuman',harga:22000,diskon:30000,rate:'⭐ 4.9 (290)',foto:'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=500&q=80'},
+{id:9,nama:'Boba Brown Sugar',kat:'minuman',harga:20000,diskon:28000,rate:'⭐ 4.8 (510)',foto:'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=500&q=80'},
+{id:10,nama:'Es Jeruk Peras Murni',kat:'minuman',harga:12000,diskon:18000,rate:'⭐ 4.9 (340)',foto:'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=500&q=80'},
+];
+let cart=[];
+let katAktif='semua';
+function tampil(){
+  let q=document.getElementById('cari').value.toLowerCase();
+  let list=produk.filter(p=>(katAktif==='semua'||p.kat===katAktif)&&p.nama.toLowerCase().includes(q));
+  document.getElementById('grid').innerHTML=list.map(p=>{
+    let persen=Math.round((1-p.harga/p.diskon)*100);
+    return `
+    <div class="card">
+      <div class="cardImg"><img src="${p.foto}" alt="${p.nama}" loading="lazy"><span class="diskon">-${persen}%</span></div>
+      <div class="cardBody"><small>${p.kat.toUpperCase()}</small><b>${p.nama}</b><div class="stars">${p.rate}</div><div class="price">Rp ${p.harga.toLocaleString('id-ID')} <s>Rp ${p.diskon.toLocaleString('id-ID')}</s></div>
+      <button onclick="addCart(${p.id},this)">+ KERANJANG</button></div>
+    </div>`}).join('') || '<p style="grid-column:1/3;text-align:center;color:#ccc">Produk gak ketemu.</p>';
+}
+function filterKat(kat,btn){katAktif=kat;document.querySelectorAll('.cats button').forEach(b=>b.classList.remove('on'));btn.classList.add('on');tampil();}
+function filterProduk(){tampil();}
+function addCart(id,btn){let p=produk.find(x=>x.id===id);cart.push(p);btn.innerText='✓ DITAMBAH';btn.classList.add('added');setTimeout(()=>{btn.innerText='+ KERANJANG';btn.classList.remove('added')},1000);updateCart();}
+function updateCart(){document.getElementById('cartCount').innerText=cart.length;let total=cart.reduce((a,b)=>a+b.harga,0);document.getElementById('cartTotal').innerText='Rp '+total.toLocaleString('id-ID');document.getElementById('cartList').innerHTML=cart.length?cart.map((p,i)=>`<div class="cartItem"><span style="display:flex;gap:8px;align-items:center"><img src="${p.foto}"><span>${p.nama}</span></span><span><b>Rp ${p.harga.toLocaleString('id-ID')}</b> <button onclick="hapus(${i})" style="border:none;background:#fff;padding:4px 8px;border-radius:6px">✕</button></span></div>`).join(''):'<p style="color:#aaa;font-size:13px">Keranjang masih kosong.</p>';}
+function hapus(i){cart.splice(i,1);updateCart();}
+function clearCart(){cart=[];updateCart();}
+function toggleCart(){document.getElementById('cartBox').classList.add('show');document.getElementById('overlay').classList.add('show');}
+function closeCart(){document.getElementById('cartBox').classList.remove('show');document.getElementById('overlay').classList.remove('show');}
+function checkoutWA(){if(!cart.length){alert('Keranjang masih kosong!');return;}let total=cart.reduce((a,b)=>a+b.harga,0);let pesan='asalamualaikum ka, saya mau order:%0A'+cart.map(p=>'- '+p.nama+' (Rp '+p.harga.toLocaleString('id-ID')+')').join('%0A')+'%0A%0ATotal: Rp '+total.toLocaleString('id-ID');window.open('https://wa.me/62881022734231?text='+pesan,'_blank');}
+function toggleNav(){let d=document.getElementById('drawer');let o=document.getElementById('overlay');if(!d.classList.contains('open')){d.classList.add('open');o.classList.add('show');}else closeNav();}
+function closeNav(){document.getElementById('drawer').classList.remove('open');document.getElementById('overlay').classList.remove('show');}
+tampil();
+</script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NGOBROL - ALFARIZI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif}
+body{background:linear-gradient(180deg,#000,#111,#1a1a1a,#000);color:#fff;min-height:100vh}
+.wrap{max-width:480px;margin:0 auto;min-height:100vh;border-left:1px solid rgba(255,255,255,0.25);border-right:1px solid rgba(255,255,255,0.25);display:flex;flex-direction:column}
+.topBar{display:flex;align-items:center;gap:10px;padding:12px;background:linear-gradient(135deg,rgba(0,0,0,0.85),rgba(60,60,60,0.65),rgba(255,255,255,0.35));border-bottom:1px solid rgba(255,255,255,0.3);position:sticky;top:0;z-index:20}
+.topBar b{font-size:16px;display:block}
+.topBar small{color:#ccc;letter-spacing:2px;font-size:9px}
+.liveDot{margin-left:auto;font-size:11px;font-weight:bold;background:#22c55e;padding:6px 10px;border-radius:20px}
+.head{padding:14px;text-align:center}
+.head b{font-size:19px}
+.head p{font-size:12px;color:#bbb;margin-top:4px}
+.namaBox{margin:0 10px 10px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3);border-radius:14px;padding:10px}
+.namaBox label{font-size:11px;color:#ccc}
+.namaBox input{width:100%;padding:11px;border-radius:10px;border:1px solid rgba(255,255,255,0.3);background:rgba(0,0,0,0.6);color:#fff;outline:none;margin-top:6px;font-size:14px;font-weight:bold}
+.chat{flex:1;padding:0 10px 10px;display:flex;flex-direction:column;gap:10px;overflow-y:auto}
+.chatItem{background:linear-gradient(135deg,rgba(255,255,255,0.55),rgba(90,90,90,0.45),rgba(0,0,0,0.75));border:1px solid rgba(255,255,255,0.35);border-radius:16px;padding:10px 12px}
+.chatItem.me{background:linear-gradient(135deg,#fff,#ccc,#555);color:#000;border-color:#fff}
+.chatItem.me small{color:#555}
+.chatTop{display:flex;align-items:center;gap:8px}
+.ava{width:32px;height:32px;border-radius:50%;background:#fff;color:#000;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;flex-shrink:0}
+.chatItem.me .ava{background:#000;color:#fff}
+.chatTop b{font-size:13px}
+.chatTop small{font-size:10px;color:#bbb;margin-left:auto}
+.chatItem p{font-size:13px;line-height:1.5;margin-top:6px;white-space:pre-wrap;word-break:break-word}
+.delBtn{border:none;background:rgba(255,255,255,0.2);color:#fff;padding:4px 8px;border-radius:8px;font-size:11px;margin-left:6px}
+.chatItem.me .delBtn{background:rgba(0,0,0,0.15);color:#000}
+.empty{text-align:center;color:#aaa;font-size:13px;padding:30px 10px;line-height:1.6}
+.inputBar{position:sticky;bottom:0;background:rgba(0,0,0,0.9);border-top:1px solid rgba(255,255,255,0.3);padding:10px;display:flex;gap:8px}
+.inputBar input{flex:1;padding:13px;border-radius:20px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;outline:none;font-size:14px}
+.inputBar button{padding:13px 18px;border:none;border-radius:20px;background:#fff;color:#000;font-weight:900;font-size:14px}
+.menu{display:flex;gap:8px;padding:0 10px 10px}
+.menu a{flex:1;text-align:center;padding:10px;border-radius:12px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.25);color:#fff;text-decoration:none;font-size:12px;font-weight:bold}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#fff;color:#000;padding:12px 18px;border-radius:20px;font-weight:bold;font-size:13px;z-index:100;display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topBar"><div><small>// NGOBROL BARENG_</small><b>ALFARIZI</b></div><span class="liveDot">● LIVE</span></div>
+  <div class="head"><b>💬 Tempat Ngobrol Semua Orang</b><p>Ngetik di sini, langsung diliat semua orang.<br>Gak ada foto, gak ada video, murni ngobrol.</p></div>
+  <div class="menu"><a href="index.html">🏠 Toko</a><a href="dashboard.html">📸 Dashboard</a><a href="komunitas.html" style="background:#fff;color:#000">💬 Ngobrol</a></div>
+  <div class="namaBox"><label>NAMA LU (biar orang tau siapa yang ngetik)</label><input type="text" id="namaChat" placeholder="Tulis nama lu..." value="Alfarizi"></div>
+  <div class="chat" id="chatList"><div class="empty">⏳ Lagi nyambung...</div></div>
+  <div class="inputBar"><input type="text" id="pesanInput" placeholder="Tulis pesan..." onkeydown="if(event.key==='Enter') kirimPesan()"><button onclick="kirimPesan()">Kirim 🚀</button></div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+// === GANTI ID INI PAKE NPOINT BARU BUAT NGOBROL, JANGAN PAKE YANG LAMA ===
+const NPOINT_ID = "67721059d7f24e580ead";
+const NPOINT_URL = "https://api.npoint.io/" + NPOINT_ID;
+let chats=[]; let lastJson='';
+function showToast(t){ let el=document.getElementById('toast'); el.innerText=t; el.style.display='block'; setTimeout(()=>el.style.display='none',2500); }
+async function fetchChat(silent){
+  try{
+    let res=await fetch(NPOINT_URL, {cache:'no-store'});
+    let data=await res.json(); if(!Array.isArray(data)) data=[];
+    let json=JSON.stringify(data);
+    if(json!==lastJson){
+      if(lastJson && !silent) showToast('💬 Ada pesan baru!');
+      lastJson=json; chats=data; render();
+    }
+  }catch(e){}
+}
+async function saveChat(){
+  await fetch(NPOINT_URL, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(chats)});
+  lastJson=JSON.stringify(chats);
+}
+async function kirimPesan(){
+  let input=document.getElementById('pesanInput');
+  let teks=input.value.trim(); if(!teks) return;
+  if(NPOINT_ID.includes('GANTI')){ alert('Ganti dulu NPOINT_ID di kode pake NPoint baru!'); return; }
+  let nama=document.getElementById('namaChat').value.trim()||'Anonim';
+  localStorage.setItem('namaChat', nama);
+  await fetchChat(true);
+  chats.push({id:Date.now(), nama, teks, time:new Date().toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})});
+  // Biar gak kepenuhan, simpen 200 pesan terakhir aja
+  if(chats.length>200) chats=chats.slice(-200);
+  input.value=''; render();
+  await saveChat();
+  window.scrollTo(0, document.body.scrollHeight);
+}
+async function hapusPesan(id){
+  if(!confirm('Hapus pesan ini?')) return;
+  chats=chats.filter(c=>c.id!==id); render(); await saveChat();
+}
+function render(){
+  let list=document.getElementById('chatList');
+  let namaSaya=document.getElementById('namaChat').value.trim();
+  if(!chats.length){ list.innerHTML=`<div class="empty">Belum ada yang ngobrol nih.<br>Jadi yang pertama ngetik di bawah 👇</div>`; return; }
+  list.innerHTML=chats.map(c=>{
+    let me = c.nama===namaSaya;
+    return `<div class="chatItem ${me?'me':''}">
+      <div class="chatTop"><div class="ava">${(c.nama||'A').charAt(0).toUpperCase()}</div><b>${c.nama}</b><small>${c.time||''}</small><button class="delBtn" onclick="hapusPesan(${c.id})">🗑️</button></div>
+      <p>${c.teks}</p>
+    </div>`;
+  }).join('');
+  // Auto scroll ke bawah kalo ada pesan baru
+  list.scrollTop = list.scrollHeight;
+}
+// Inget nama terakhir
+let saved=localStorage.getItem('namaChat'); if(saved) document.getElementById('namaChat').value=saved;
+fetchChat(false);
+setInterval(()=>fetchChat(false), 3000);
+</script>
+</body>
+</html>
